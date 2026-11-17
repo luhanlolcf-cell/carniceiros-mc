@@ -132,7 +132,7 @@
       <form onsubmit="saveSupabaseConfigForm(event)" class="space-y-3 text-xs">
         <div>
           <label class="mc-label" for="inp-supabase-url">Supabase Project URL *</label>
-          <input id="inp-supabase-url" type="url" required placeholder="https://seu-projeto.supabase.co" class="mc-input font-mono" />
+          <input id="inp-supabase-url" type="url" required value="https://uehaphdmtbmonlojoaic.supabase.co" placeholder="https://uehaphdmtbmonlojoaic.supabase.co" class="mc-input font-mono" />
         </div>
         <div>
           <label class="mc-label" for="inp-supabase-key">Supabase Anon Public Key *</label>
@@ -1262,7 +1262,7 @@ CREATE POLICY "cmc_shared_state_all" ON public.cmc_shared_state FOR ALL TO anon,
     const SUPABASE_CONFIG_STORAGE_KEY = 'cmc_supabase_config_v1';
 
     // Credenciais padrão de nuvem (podem ser preenchidas diretamente aqui ou pelo botão "☁ Sync Web/APK" no topo)
-    let DEFAULT_SUPABASE_URL = '';
+    let DEFAULT_SUPABASE_URL = 'https://uehaphdmtbmonlojoaic.supabase.co';
     let DEFAULT_SUPABASE_ANON_KEY = '';
 
     function getSupabaseConfig() {
@@ -1500,12 +1500,12 @@ CREATE POLICY "cmc_shared_state_all" ON public.cmc_shared_state FOR ALL TO anon,
       const cfg = getSupabaseConfig();
       const urlInp = document.getElementById('inp-supabase-url');
       const keyInp = document.getElementById('inp-supabase-key');
-      if (urlInp) urlInp.value = cfg ? cfg.url : '';
-      if (keyInp) keyInp.value = cfg ? cfg.anonKey : '';
+      if (urlInp) urlInp.value = cfg ? cfg.url : (DEFAULT_SUPABASE_URL || '');
+      if (keyInp) keyInp.value = cfg ? cfg.anonKey : (DEFAULT_SUPABASE_ANON_KEY || '');
       if (cfg) {
         updateCloudSyncBadge('online', `Conectado a ${cfg.url}. Senhas e dados unificados entre Web e APK.`);
       } else {
-        updateCloudSyncBadge('unconfigured', 'Informe a Project URL e a Anon Public Key do seu projeto Supabase para unificar Web + APK Android.');
+        updateCloudSyncBadge('unconfigured', 'Informe a Anon Public Key do projeto https://uehaphdmtbmonlojoaic.supabase.co para unificar Web + APK Android.');
       }
       toggleElement('modal-cloud-sync');
     }
