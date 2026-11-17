@@ -619,43 +619,65 @@
                 </div>
                 <p id="events-subtitle" class="text-xs text-[#8a8c94] mt-1"></p>
               </div>
-              <button id="btn-new-event" onclick="toggleElement('modal-new-event')" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
+              <button id="btn-new-event" type="button" onclick="toggleNewEventModal()" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
                 + Adicionar na Agenda (BOB)
               </button>
             </div>
 
+            <div id="agenda-saved-banner" class="hidden p-3 rounded border border-[#10b981] bg-[#071f16] text-[#10b981] text-xs font-mono font-bold"></div>
+
             <!-- Formulário de Novo Compromisso na Agenda (Exclusivo BOB - Full Edição) -->
-            <form id="modal-new-event" onsubmit="createEvent(event)" class="hidden bg-[#020203] border border-[#6b0f1a] rounded-lg p-4 space-y-3">
-              <div class="text-xs font-bold uppercase tracking-wider text-[#9e2232] border-b border-[#1a1b20] pb-2">
-                Novo Compromisso na Agenda Carniceiros (Exclusivo BOB • Full Edição)
+            <form id="modal-new-event" onsubmit="createEvent(event); return false;" class="hidden bg-[#020203] border-2 border-[#6b0f1a] rounded-lg p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-[#1a1b20] pb-2">
+                <div class="text-xs font-bold uppercase tracking-wider text-[#9e2232]">
+                  Novo Compromisso na Agenda Carniceiros (Exclusivo BOB • Full Edição)
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#6b0f1a] text-[#e6e6e1] font-bold">SALVAMENTO AUTOMÁTICO ATIVO</span>
               </div>
+              <div id="evt-form-error" class="hidden text-xs p-2.5 rounded border border-[#6b0f1a] bg-[#170306] text-[#e6e6e1] font-mono"></div>
               <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <input id="evt-title" required placeholder="Título na Agenda (ex: Reunião Extra / Aniversário)" class="md:col-span-2 px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1]" />
-                <input id="evt-date" type="date" required value="2026-11-10" class="px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1] font-mono" />
-                <input id="evt-time" type="text" required value="20:00h" placeholder="Horário (ex: 20:00h)" class="px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1] font-mono" />
+                <input id="evt-title" oninput="saveEventDraft()" placeholder="Título na Agenda * (ex: Reunião Extra / Aniversário)" class="md:col-span-2 px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1]" />
+                <input id="evt-date" type="date" onchange="saveEventDraft()" oninput="saveEventDraft()" value="2026-11-10" class="px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1] font-mono" />
+                <input id="evt-time" type="text" oninput="saveEventDraft()" value="20:00h" placeholder="Horário (ex: 20:00h)" class="px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1] font-mono" />
               </div>
-              <input id="evt-loc" required placeholder="Local (ex: Sede Comando Central — Galpão Carniceiros MC)" class="w-full px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1]" />
-              <textarea id="evt-desc" rows="2" required placeholder="Pauta ou observações do compromisso na Agenda..." class="w-full px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1]"></textarea>
+              <input id="evt-loc" oninput="saveEventDraft()" placeholder="Local (ex: Sede Comando Central — Galpão Carniceiros MC)" class="w-full px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1]" />
+              <textarea id="evt-desc" rows="2" oninput="saveEventDraft()" placeholder="Pauta ou observações do compromisso na Agenda..." class="w-full px-2.5 py-2 text-xs rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1]"></textarea>
               <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
                 <div class="flex flex-wrap items-center gap-4 text-xs">
                   <label class="flex items-center gap-1.5 cursor-pointer">
-                    <input id="evt-mandatory" type="checkbox" checked class="accent-[#6b0f1a]" />
+                    <input id="evt-mandatory" type="checkbox" checked onchange="saveEventDraft()" class="accent-[#6b0f1a]" />
                     <span class="font-bold text-[#9e2232] uppercase">★ Presença Obrigatória</span>
                   </label>
                 </div>
-                <div class="flex items-center gap-2 text-xs">
-                  <label class="px-3 py-1.5 rounded border border-[#6b0f1a] bg-[#060608] cursor-pointer font-bold">
-                    <span>Anexar Imagem / PDF (.jpg/.png/.webp/.pdf)</span>
-                    <input id="evt-flyer" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" class="hidden" onchange="previewFlyerFile(this)" />
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                  <label onclick="persistActiveSession(); saveEventDraft();" class="px-3 py-1.5 rounded border border-[#6b0f1a] bg-[#060608] hover:bg-[#170306] cursor-pointer font-bold text-[#e6e6e1] transition">
+                    <span>📎 Anexar Imagem ou PDF</span>
+                    <input id="evt-flyer" type="file" accept="image/*,.pdf,.jpg,.jpeg,.png,.webp" class="hidden" onchange="previewFlyerFile(this)" />
                   </label>
                   <span id="evt-flyer-status" class="font-mono text-[#8a8c94]">Sem anexo</span>
+                  <button id="evt-flyer-clear" type="button" onclick="clearPendingFlyer()" class="hidden text-[10px] font-mono px-2 py-0.5 rounded border border-[#6b0f1a] text-[#9e2232] hover:text-[#e6e6e1]">✕ Remover anexo</button>
                 </div>
               </div>
+              <div id="evt-flyer-preview-box" class="hidden bg-[#060608] border border-[#1a1b20] rounded p-2.5 flex items-center gap-3">
+                <img id="evt-flyer-preview-img" alt="Preview do Anexo" class="hidden w-14 h-14 object-cover rounded border border-[#6b0f1a]" />
+                <div id="evt-flyer-preview-meta" class="text-xs font-mono text-[#10b981] break-all"></div>
+              </div>
               <div class="flex justify-end gap-2">
-                <button type="button" onclick="toggleElement('modal-new-event')" class="px-3 py-1.5 text-xs rounded border border-[#1a1b20] bg-[#060608]">Cancelar</button>
-                <button type="submit" class="px-4 py-1.5 text-xs rounded-sm mc-btn-burgundy">Salvar na Agenda</button>
+                <button type="button" onclick="cancelNewEventModal()" class="px-3 py-1.5 text-xs rounded border border-[#1a1b20] bg-[#060608] text-[#e6e6e1]">Cancelar</button>
+                <button type="button" onclick="createEvent(event)" class="px-4 py-1.5 text-xs rounded-sm mc-btn-burgundy">💾 Salvar na Agenda</button>
               </div>
             </form>
+
+            <!-- Modal para visualizar anexo de evento na Agenda -->
+            <div id="modal-attachment-viewer" class="hidden fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4" onclick="closeAttachmentViewer()">
+              <div class="mc-shield-panel rounded-lg max-w-2xl w-full p-4 space-y-3 border-2 border-[#6b0f1a]" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-between border-b border-[#1a1b20] pb-2">
+                  <div id="att-viewer-title" class="mc-display-font text-xs text-[#e6e6e1] truncate">Anexo da Agenda Carniceiros</div>
+                  <button type="button" onclick="closeAttachmentViewer()" class="px-2.5 py-1 rounded text-xs font-mono bg-[#060608] border border-[#6b0f1a] text-[#e6e6e1]">✕ Fechar</button>
+                </div>
+                <div id="att-viewer-body" class="bg-[#020203] border border-[#1a1b20] rounded p-3 flex flex-col items-center justify-center min-h-[180px] max-h-[70vh] overflow-auto"></div>
+              </div>
+            </div>
 
             <!-- Barra de Navegação do Calendário -->
             <div class="bg-[#020203] border border-[#1a1b20] rounded-lg p-3 flex flex-wrap items-center justify-between gap-3">
@@ -671,8 +693,10 @@
 
               <div class="flex flex-wrap items-center gap-2 text-xs">
                 <select id="agenda-year-select" onchange="setAgendaYear(this.value)" class="px-2.5 py-1.5 rounded bg-[#060608] border border-[#1a1b20] text-[#e6e6e1] font-mono font-bold">
+                  <option value="2025">Ano 2025</option>
                   <option value="2026" selected>Ano 2026</option>
                   <option value="2027">Ano 2027</option>
+                  <option value="2028">Ano 2028</option>
                 </select>
                 <button type="button" onclick="jumpToCurrentMonth()" class="px-2.5 py-1.5 rounded-sm border border-[#6b0f1a] bg-[#090a0d] text-[#e6e6e1] font-mono text-[11px] font-bold uppercase">
                   Mês Atual
@@ -736,12 +760,12 @@
               <h2 class="mc-display-font text-sm text-[#e6e6e1]">Tarefas</h2>
               <p class="text-xs text-[#8a8c94]">Controle de ações, responsáveis e prazos.</p>
             </div>
-            <button id="btn-new-task" onclick="toggleElement('modal-new-task')" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
+            <button id="btn-new-task" type="button" onclick="toggleElement('modal-new-task')" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
               + Nova Tarefa (BOB)
             </button>
           </div>
 
-          <form id="modal-new-task" onsubmit="createTask(event)" class="hidden mc-shield-panel rounded-lg p-4 space-y-3">
+          <form id="modal-new-task" onsubmit="createTask(event); return false;" class="hidden mc-shield-panel rounded-lg p-4 space-y-3">
             <div class="text-xs font-bold uppercase tracking-wider text-[#9e2232] border-b border-[#1a1b20] pb-2">Nova Missão</div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
               <input id="tsk-title" required placeholder="Título da Missão" class="px-2.5 py-2 text-xs rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]" />
@@ -768,18 +792,18 @@
               <p class="text-xs text-[#8a8c94]">Canal aberto a todos os integrantes para envio de ideias e arquivos validados.</p>
             </div>
 
-            <form onsubmit="submitSuggestion(event)" class="space-y-3 text-xs">
+            <form onsubmit="submitSuggestion(event); return false;" class="space-y-3 text-xs">
               <input id="sug-subject" required placeholder="Assunto da sugestão ou anexo..." class="w-full px-3 py-2 rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]" />
               <textarea id="sug-content" rows="2" required placeholder="Descreva sua ideia ou observação para a Diretoria..." class="w-full px-3 py-2 rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]"></textarea>
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
-                  <label class="px-3 py-1.5 rounded border border-[#6b0f1a] bg-[#060608] cursor-pointer font-bold">
+                  <label onclick="persistActiveSession();" class="px-3 py-1.5 rounded border border-[#6b0f1a] bg-[#060608] cursor-pointer font-bold">
                     <span>+ Anexar Arquivo (PDF/JPG/PNG)</span>
-                    <input id="sug-file" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" class="hidden" onchange="validateAttachmentInput(this)" />
+                    <input id="sug-file" type="file" accept="image/*,.pdf,.jpg,.jpeg,.png,.webp" class="hidden" onchange="validateAttachmentInput(this)" />
                   </label>
                   <span id="sug-file-info" class="font-mono text-[#8a8c94]">Sem anexo</span>
                 </div>
-                <button type="submit" class="px-4 py-2 rounded-sm mc-btn-burgundy">
+                <button type="button" onclick="submitSuggestion(event)" class="px-4 py-2 rounded-sm mc-btn-burgundy">
                   Enviar para a Diretoria
                 </button>
               </div>
@@ -1179,6 +1203,26 @@
     let lastRegisteredEmail = '';
     const PW_STORAGE_KEY = 'cmc_member_pwhashes_v1';
     const MEMBER_RECORDS_STORAGE_KEY = 'cmc_member_records_v1';
+    const ACTIVE_SESSION_STORAGE_KEY = 'cmc_active_session_v1';
+
+    function persistActiveSession() {
+      try {
+        localStorage.setItem(ACTIVE_SESSION_STORAGE_KEY, JSON.stringify({
+          activeMemberId,
+          currentAuthScreen,
+          currentTab,
+          hasLoggedInOnce,
+          agendaYear: typeof agendaYear === 'number' ? agendaYear : 2026,
+          agendaMonth: typeof agendaMonth === 'number' ? agendaMonth : 10
+        }));
+      } catch (_e) {}
+    }
+
+    function clearActiveSession() {
+      try {
+        localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
+      } catch (_e) {}
+    }
 
     function loadSavedPasswords() {
       try {
@@ -1236,7 +1280,7 @@
       } catch (_e) {}
     }
 
-    function showAuthScreen(screen) {
+    function showAuthScreen(screen, skipScroll) {
       currentAuthScreen = screen;
       document.getElementById('screen-login').classList.toggle('hidden', screen !== 'login');
       document.getElementById('screen-register').classList.toggle('hidden', screen !== 'register');
@@ -1252,11 +1296,16 @@
         selectLoginMember(selectedLoginMemberId || activeMemberId || 'm-05');
       }
       if (screen === 'register') resetRegisterForm();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      persistActiveSession();
+      if (!skipScroll) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
 
     function toggleAuthScreen() {
       if (currentAuthScreen === 'app') {
+        hasLoggedInOnce = false;
+        clearActiveSession();
         showAuthScreen('login');
       } else if (hasLoggedInOnce) {
         showAuthScreen('app');
@@ -1446,12 +1495,15 @@
       m.pwHash = hash;
       persistMemberPassword(m.id, hash);
       hasLoggedInOnce = true;
+      activeMemberId = m.id;
+      currentAuthScreen = 'app';
+      persistActiveSession();
       setLoginFeedback('ok', `Senha cadastrada com sucesso! Entrando como ${m.roadName}...`);
       setTimeout(() => {
         document.getElementById('login-feedback').classList.add('hidden');
         selectActiveMember(m.id);
         showAuthScreen('app');
-      }, 450);
+      }, 300);
     }
 
     function resetSelectedMemberFirstAccess() {
@@ -1498,12 +1550,15 @@
       remainingLoginAttempts = 5;
       document.getElementById('login-attempts-left').textContent = '5';
       hasLoggedInOnce = true;
+      activeMemberId = m.id;
+      currentAuthScreen = 'app';
+      persistActiveSession();
       setLoginFeedback('ok', `200 OK — Bem-vindo, ${m.roadName}!`);
       setTimeout(() => {
         document.getElementById('login-feedback').classList.add('hidden');
         selectActiveMember(m.id);
         showAuthScreen('app');
-      }, 400);
+      }, 250);
     }
 
     function resetRegisterForm() {
@@ -1629,6 +1684,7 @@
 
       renderAll();
       openTab(currentTab);
+      persistActiveSession();
     }
 
     function openTab(tabName) {
@@ -1656,6 +1712,7 @@
 
       const targetPanel = document.getElementById('panel-' + tabName);
       if (targetPanel) targetPanel.classList.remove('hidden');
+      persistActiveSession();
     }
 
     // ===================== INTEGRANTES (LISTA ÚNICA REFORMULADA) =====================
@@ -2738,6 +2795,16 @@
     }
 
     // Compromissos extras além das 12 reuniões mensais fixas (editáveis por BOB)
+    const AGENDA_EVENTS_STORAGE_KEY = 'cmc_agenda_events_v1';
+    const EVENT_DRAFT_STORAGE_KEY = 'cmc_event_draft_v1';
+    const TASKS_STORAGE_KEY = 'cmc_tasks_v1';
+    const SUGGESTIONS_STORAGE_KEY = 'cmc_suggestions_v1';
+
+    let pendingFlyerDataUrl = null;
+    let pendingFlyerType = null;
+    let pendingAttachmentDataUrl = null;
+    let pendingAttachmentType = null;
+
     let customAgendaEvents = [
       {
         id: 'evt-extra-01',
@@ -2771,6 +2838,215 @@
       }
     ];
 
+    function loadSavedAgendaEvents() {
+      try {
+        const raw = localStorage.getItem(AGENDA_EVENTS_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          customAgendaEvents = parsed;
+        }
+      } catch (_e) {}
+    }
+
+    function persistAgendaEvents() {
+      try {
+        localStorage.setItem(AGENDA_EVENTS_STORAGE_KEY, JSON.stringify(customAgendaEvents));
+      } catch (_quotaErr) {
+        try {
+          const compact = customAgendaEvents.map(ev => {
+            const copy = Object.assign({}, ev);
+            if (copy.flyerDataUrl && copy.flyerDataUrl.length > 120000) {
+              delete copy.flyerDataUrl;
+            }
+            return copy;
+          });
+          localStorage.setItem(AGENDA_EVENTS_STORAGE_KEY, JSON.stringify(compact));
+        } catch (_e2) {}
+      }
+    }
+
+    function ensureAgendaYearOption(yearNum) {
+      const sel = document.getElementById('agenda-year-select');
+      if (!sel) return;
+      const yStr = String(yearNum);
+      if (!Array.from(sel.options).some(opt => opt.value === yStr)) {
+        const opt = document.createElement('option');
+        opt.value = yStr;
+        opt.textContent = `Ano ${yStr}`;
+        sel.appendChild(opt);
+      }
+      sel.value = yStr;
+    }
+
+    function showAgendaBanner(msg) {
+      const banner = document.getElementById('agenda-saved-banner');
+      if (!banner) return;
+      banner.textContent = msg;
+      banner.classList.remove('hidden');
+      setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 5000);
+    }
+
+    function saveEventDraft() {
+      try {
+        const modal = document.getElementById('modal-new-event');
+        const isOpen = modal && !modal.classList.contains('hidden');
+        const draft = {
+          isOpen,
+          title: document.getElementById('evt-title')?.value || '',
+          date: document.getElementById('evt-date')?.value || '2026-11-10',
+          time: document.getElementById('evt-time')?.value || '20:00h',
+          loc: document.getElementById('evt-loc')?.value || '',
+          desc: document.getElementById('evt-desc')?.value || '',
+          mandatory: Boolean(document.getElementById('evt-mandatory')?.checked),
+          pendingFlyerMeta,
+          pendingFlyerDataUrl,
+          pendingFlyerType
+        };
+        localStorage.setItem(EVENT_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      } catch (_e) {}
+    }
+
+    function clearEventDraft() {
+      try {
+        localStorage.removeItem(EVENT_DRAFT_STORAGE_KEY);
+      } catch (_e) {}
+    }
+
+    function updateFlyerPreviewUI() {
+      const status = document.getElementById('evt-flyer-status');
+      const clearBtn = document.getElementById('evt-flyer-clear');
+      const box = document.getElementById('evt-flyer-preview-box');
+      const img = document.getElementById('evt-flyer-preview-img');
+      const meta = document.getElementById('evt-flyer-preview-meta');
+      if (!status) return;
+
+      if (!pendingFlyerMeta) {
+        status.textContent = 'Sem anexo';
+        status.className = 'font-mono text-[#8a8c94]';
+        if (clearBtn) clearBtn.classList.add('hidden');
+        if (box) box.classList.add('hidden');
+        if (img) { img.src = ''; img.classList.add('hidden'); }
+        return;
+      }
+
+      status.textContent = `✓ ${pendingFlyerMeta}`;
+      status.className = 'font-mono text-[#10b981] font-bold';
+      if (clearBtn) clearBtn.classList.remove('hidden');
+      if (box) box.classList.remove('hidden');
+      if (meta) meta.textContent = `Anexo pronto para salvar na Agenda: ${pendingFlyerMeta}`;
+      if (img) {
+        if (pendingFlyerDataUrl && String(pendingFlyerDataUrl).startsWith('data:image/')) {
+          img.src = pendingFlyerDataUrl;
+          img.classList.remove('hidden');
+        } else {
+          img.src = '';
+          img.classList.add('hidden');
+        }
+      }
+    }
+
+    function clearPendingFlyer() {
+      pendingFlyerMeta = null;
+      pendingFlyerDataUrl = null;
+      pendingFlyerType = null;
+      const inp = document.getElementById('evt-flyer');
+      if (inp) inp.value = '';
+      updateFlyerPreviewUI();
+      saveEventDraft();
+    }
+
+    function restoreEventDraftIfOpen() {
+      try {
+        const raw = localStorage.getItem(EVENT_DRAFT_STORAGE_KEY);
+        if (!raw) return;
+        const draft = JSON.parse(raw);
+        if (!draft) return;
+        if (document.getElementById('evt-title')) document.getElementById('evt-title').value = draft.title || '';
+        if (document.getElementById('evt-date') && draft.date) document.getElementById('evt-date').value = draft.date;
+        if (document.getElementById('evt-time') && draft.time) document.getElementById('evt-time').value = draft.time;
+        if (document.getElementById('evt-loc')) document.getElementById('evt-loc').value = draft.loc || '';
+        if (document.getElementById('evt-desc')) document.getElementById('evt-desc').value = draft.desc || '';
+        if (document.getElementById('evt-mandatory') && typeof draft.mandatory === 'boolean') {
+          document.getElementById('evt-mandatory').checked = draft.mandatory;
+        }
+        pendingFlyerMeta = draft.pendingFlyerMeta || null;
+        pendingFlyerDataUrl = draft.pendingFlyerDataUrl || null;
+        pendingFlyerType = draft.pendingFlyerType || null;
+        updateFlyerPreviewUI();
+        if (draft.isOpen && canFullEdit()) {
+          const modal = document.getElementById('modal-new-event');
+          if (modal) modal.classList.remove('hidden');
+        }
+      } catch (_e) {}
+    }
+
+    function toggleNewEventModal() {
+      const modal = document.getElementById('modal-new-event');
+      if (!modal) return;
+      const errBox = document.getElementById('evt-form-error');
+      if (errBox) errBox.classList.add('hidden');
+      const willOpen = modal.classList.contains('hidden');
+      if (willOpen) {
+        const dateInp = document.getElementById('evt-date');
+        if (dateInp && !dateInp.value) {
+          dateInp.value = formatIsoDate(agendaYear, agendaMonth, 15);
+        }
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+      saveEventDraft();
+      persistActiveSession();
+    }
+
+    function cancelNewEventModal() {
+      const modal = document.getElementById('modal-new-event');
+      if (modal) modal.classList.add('hidden');
+      const errBox = document.getElementById('evt-form-error');
+      if (errBox) errBox.classList.add('hidden');
+      clearPendingFlyer();
+      clearEventDraft();
+    }
+
+    function openAttachmentViewer(title, flyerKey, dataUrl) {
+      const modal = document.getElementById('modal-attachment-viewer');
+      const titleEl = document.getElementById('att-viewer-title');
+      const bodyEl = document.getElementById('att-viewer-body');
+      if (!modal || !bodyEl) return;
+      titleEl.textContent = `📎 Anexo — ${title}`;
+      bodyEl.innerHTML = '';
+
+      if (dataUrl && String(dataUrl).startsWith('data:image/')) {
+        const img = el('img', 'max-h-[58vh] w-auto object-contain rounded border border-[#6b0f1a]');
+        img.src = dataUrl;
+        img.alt = flyerKey || title;
+        bodyEl.appendChild(img);
+        const cap = el('div', 'text-xs font-mono text-[#10b981] mt-2', flyerKey || 'Imagem anexada');
+        bodyEl.appendChild(cap);
+      } else if (dataUrl && String(dataUrl).startsWith('data:application/pdf')) {
+        const info = el('div', 'text-xs font-mono text-[#e6e6e1] mb-3 text-center', `Documento PDF anexado: ${flyerKey}`);
+        const dl = el('a', 'px-4 py-2 rounded-sm mc-btn-burgundy text-xs inline-block', '⬇ Baixar / Abrir PDF');
+        dl.href = dataUrl;
+        dl.download = flyerKey || 'anexo-carniceiros-mc.pdf';
+        dl.target = '_blank';
+        bodyEl.append(info, dl);
+      } else {
+        const icon = el('img', 'w-20 h-20 object-contain rounded border border-[#6b0f1a] p-2 mb-2');
+        icon.src = CREST_ROCKER_URI;
+        const info = el('div', 'text-xs font-mono text-[#e6e6e1] text-center', `Arquivo registrado na Agenda: ${flyerKey}`);
+        bodyEl.append(icon, info);
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeAttachmentViewer() {
+      const modal = document.getElementById('modal-attachment-viewer');
+      if (modal) modal.classList.add('hidden');
+    }
+
     function changeAgendaMonth(delta) {
       agendaMonth += delta;
       if (agendaMonth < 0) {
@@ -2780,36 +3056,123 @@
         agendaMonth = 0;
         agendaYear++;
       }
-      const sel = document.getElementById('agenda-year-select');
-      if (sel) sel.value = String(agendaYear);
+      ensureAgendaYearOption(agendaYear);
+      persistActiveSession();
       renderEvents();
     }
 
     function setAgendaYear(yearVal) {
       agendaYear = parseInt(yearVal, 10) || 2026;
+      ensureAgendaYearOption(agendaYear);
+      persistActiveSession();
       renderEvents();
     }
 
     function jumpToCurrentMonth() {
       agendaYear = 2026;
       agendaMonth = 10; // Novembro/2026
-      const sel = document.getElementById('agenda-year-select');
-      if (sel) sel.value = '2026';
+      ensureAgendaYearOption(2026);
+      persistActiveSession();
       renderEvents();
     }
 
-    function previewFlyerFile(input) {
-      const status = document.getElementById('evt-flyer-status');
-      const file = input.files && input.files[0];
-      if (!file) return;
-      const ext = file.name.split('.').pop().toLowerCase();
-      if (!['jpg', 'jpeg', 'png', 'webp', 'pdf'].includes(ext)) {
-        status.textContent = '415 Bloqueado: Extensão inválida!';
-        input.value = '';
-        return;
+    function compressImageDataUrl(file, callback) {
+      try {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const rawUrl = ev.target && ev.target.result;
+          if (!rawUrl) return callback(null);
+          const img = new Image();
+          img.onload = function() {
+            try {
+              const maxDim = 900;
+              let w = img.width || 600;
+              let h = img.height || 600;
+              if (w > maxDim || h > maxDim) {
+                if (w >= h) {
+                  h = Math.round((h * maxDim) / w);
+                  w = maxDim;
+                } else {
+                  w = Math.round((w * maxDim) / h);
+                  h = maxDim;
+                }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              const compressed = canvas.toDataURL('image/jpeg', 0.78);
+              callback(compressed);
+            } catch (_canvasErr) {
+              callback(rawUrl);
+            }
+          };
+          img.onerror = function() {
+            callback(rawUrl);
+          };
+          img.src = rawUrl;
+        };
+        reader.onerror = function() {
+          callback(null);
+        };
+        reader.readAsDataURL(file);
+      } catch (_err) {
+        callback(null);
       }
-      pendingFlyerMeta = `uuid-${Math.random().toString(16).slice(2, 10)}.${ext}`;
-      status.textContent = `Anexo validado: ${pendingFlyerMeta}`;
+    }
+
+    function previewFlyerFile(input) {
+      try {
+        persistActiveSession();
+        const status = document.getElementById('evt-flyer-status');
+        const file = input && input.files && input.files[0];
+        if (!file) return;
+        const rawName = file.name || 'anexo-agenda.jpg';
+        const ext = (rawName.includes('.') ? rawName.split('.').pop() : 'jpg').toLowerCase();
+        const isImg = (file.type && file.type.startsWith('image/')) || ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'bmp'].includes(ext);
+        const isPdf = file.type === 'application/pdf' || ext === 'pdf';
+
+        if (!isImg && !isPdf) {
+          status.textContent = 'Formato inválido! Use Imagem (JPG/PNG/WEBP) ou PDF.';
+          status.className = 'font-mono text-[#f59e0b]';
+          input.value = '';
+          return;
+        }
+
+        const sizeKb = Math.max(1, Math.round(file.size / 1024));
+        pendingFlyerMeta = `${rawName} (${sizeKb} KB)`;
+        pendingFlyerType = isImg ? 'image' : 'pdf';
+        status.textContent = `Carregando anexo: ${pendingFlyerMeta}...`;
+
+        if (isImg) {
+          compressImageDataUrl(file, function(dataUrl) {
+            pendingFlyerDataUrl = dataUrl;
+            updateFlyerPreviewUI();
+            saveEventDraft();
+            persistActiveSession();
+          });
+        } else if (isPdf && file.size <= 1500000) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            pendingFlyerDataUrl = (ev.target && ev.target.result) || null;
+            updateFlyerPreviewUI();
+            saveEventDraft();
+            persistActiveSession();
+          };
+          reader.onerror = function() {
+            pendingFlyerDataUrl = null;
+            updateFlyerPreviewUI();
+            saveEventDraft();
+          };
+          reader.readAsDataURL(file);
+        } else {
+          pendingFlyerDataUrl = null;
+          updateFlyerPreviewUI();
+          saveEventDraft();
+          persistActiveSession();
+        }
+      } catch (_e) {}
     }
 
     function renderEvents() {
@@ -2823,6 +3186,8 @@
       const annualList = document.getElementById('agenda-annual-tuesdays');
       const listHeading = document.getElementById('agenda-list-heading');
       const container = document.getElementById('events-list');
+
+      ensureAgendaYearOption(agendaYear);
 
       const secondTueDay = getSecondTuesdayDay(agendaYear, agendaMonth);
       const secondTueBr = formatBrDate(agendaYear, agendaMonth, secondTueDay);
@@ -2839,14 +3204,16 @@
       monthsBar.innerHTML = '';
       for (let m = 0; m < 12; m++) {
         const d2 = getSecondTuesdayDay(agendaYear, m);
+        const monthExtraCount = customAgendaEvents.filter(ev => ev.year === agendaYear && ev.monthIndex === m).length;
         const btn = el('button', m === agendaMonth
           ? 'px-2 py-1.5 rounded-sm text-[11px] font-mono font-bold mc-rocker-patch text-[#e6e6e1] text-center'
           : 'px-2 py-1.5 rounded-sm text-[11px] font-mono bg-[#060608] border border-[#1a1b20] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a] text-center transition');
         btn.type = 'button';
-        btn.textContent = `${MONTH_SHORT_PT[m]} (${String(d2).padStart(2, '0')})`;
+        btn.textContent = `${MONTH_SHORT_PT[m]} (${String(d2).padStart(2, '0')})${monthExtraCount > 0 ? ' • +' + monthExtraCount : ''}`;
         btn.title = `Reunião Mensal: Terça, ${formatBrDate(agendaYear, m, d2)}`;
         btn.onclick = () => {
           agendaMonth = m;
+          persistActiveSession();
           renderEvents();
         };
         monthsBar.appendChild(btn);
@@ -2910,6 +3277,7 @@
         item.type = 'button';
         item.onclick = () => {
           agendaMonth = m;
+          persistActiveSession();
           renderEvents();
         };
         const left = el('div', 'min-w-0');
@@ -2929,9 +3297,14 @@
         const card = el('div', 'mc-shield-panel rounded-lg p-4 flex flex-col justify-between space-y-3');
         const top = el('div', 'flex items-start gap-3');
 
-        const thumb = el('img', 'w-14 h-14 object-contain rounded bg-[#020203] border border-[#6b0f1a] p-1 flex-shrink-0');
-        thumb.src = ev.useShieldArt ? CREST_SHIELD_URI : CREST_ROCKER_URI;
-        thumb.alt = 'Insígnia';
+        const hasImageAttachment = Boolean(ev.flyerDataUrl && String(ev.flyerDataUrl).startsWith('data:image/'));
+        const thumb = el('img', 'w-14 h-14 rounded bg-[#020203] border border-[#6b0f1a] flex-shrink-0 ' + (hasImageAttachment ? 'object-cover cursor-pointer' : 'object-contain p-1'));
+        thumb.src = hasImageAttachment ? ev.flyerDataUrl : (ev.useShieldArt ? CREST_SHIELD_URI : CREST_ROCKER_URI);
+        thumb.alt = 'Insígnia / Anexo';
+        if (hasImageAttachment) {
+          thumb.title = 'Clique para ampliar o anexo';
+          thumb.onclick = () => openAttachmentViewer(ev.title, ev.flyerKey, ev.flyerDataUrl);
+        }
 
         const info = el('div', 'space-y-1.5 flex-1 min-w-0');
         const badges = el('div', 'flex flex-wrap items-center gap-1.5 text-[10px] font-mono');
@@ -2945,23 +3318,34 @@
         }
 
         info.appendChild(badges);
-        info.appendChild(el('h3', 'mc-display-font text-xs text-[#e6e6e1] pt-0.5', ev.title));
-        info.appendChild(el('div', 'text-xs font-mono text-[#9e2232] font-bold', `📅 ${ev.date} • 📍 ${ev.location}`));
-        info.appendChild(el('p', 'text-xs text-[#8a8c94]', ev.description));
+        info.appendChild(el('h3', 'mc-display-font text-xs text-[#e6e6e1] pt-0.5 break-words', ev.title));
+        info.appendChild(el('div', 'text-xs font-mono text-[#9e2232] font-bold break-words', `📅 ${ev.date} • 📍 ${ev.location}`));
+        info.appendChild(el('p', 'text-xs text-[#8a8c94] break-words', ev.description));
 
         top.append(thumb, info);
 
-        const flyerBox = el('div', 'bg-[#020203] border border-[#15161b] rounded px-3 py-1.5 flex items-center justify-between gap-2 text-xs font-mono');
-        flyerBox.appendChild(el('span', 'text-[#8a8c94] truncate', `📎 Anexo/Pauta: ${ev.flyerKey}`));
+        const flyerBox = el('div', 'bg-[#020203] border border-[#15161b] rounded px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono');
+        flyerBox.appendChild(el('span', 'text-[#8a8c94] truncate max-w-[260px]', `📎 Anexo/Pauta: ${ev.flyerKey}`));
+
+        const actionBtns = el('div', 'flex items-center gap-2 flex-shrink-0');
+        if (ev.flyerDataUrl) {
+          const viewBtn = el('button', 'text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-[#060608] border border-[#6b0f1a] text-[#10b981] hover:text-[#e6e6e1]', '👁 Ver Anexo');
+          viewBtn.type = 'button';
+          viewBtn.onclick = () => openAttachmentViewer(ev.title, ev.flyerKey, ev.flyerDataUrl);
+          actionBtns.appendChild(viewBtn);
+        }
         if (isBob && !ev.isFixedSecondTuesday) {
           const delBtn = el('button', 'text-[10px] font-bold uppercase text-[#9e2232] hover:text-[#e6e6e1]', 'Remover (BOB)');
           delBtn.type = 'button';
           delBtn.onclick = () => {
             customAgendaEvents = customAgendaEvents.filter(x => x.id !== ev.id);
+            persistAgendaEvents();
+            showAgendaBanner(`✓ Compromisso "${ev.title}" removido da Agenda Carniceiros.`);
             renderEvents();
           };
-          flyerBox.appendChild(delBtn);
+          actionBtns.appendChild(delBtn);
         }
+        flyerBox.appendChild(actionBtns);
 
         card.append(top, flyerBox);
         container.appendChild(card);
@@ -2969,39 +3353,95 @@
     }
 
     function createEvent(e) {
-      e.preventDefault();
-      if (!canFullEdit()) return;
-      const rawDate = document.getElementById('evt-date').value; // YYYY-MM-DD
-      const parts = rawDate.split('-').map(Number);
-      const y = parts[0] || 2026;
-      const mIdx = (parts[1] || 11) - 1;
-      const d = parts[2] || 1;
-      const timeStr = document.getElementById('evt-time').value.trim() || '20:00h';
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
 
-      customAgendaEvents.push({
+      const errBox = document.getElementById('evt-form-error');
+      if (errBox) errBox.classList.add('hidden');
+
+      if (!canFullEdit()) {
+        if (errBox) {
+          errBox.textContent = 'Permissão exclusiva de BOB (Secretaria) para adicionar eventos na Agenda.';
+          errBox.classList.remove('hidden');
+        }
+        return false;
+      }
+
+      const titleInput = document.getElementById('evt-title');
+      const titleVal = (titleInput?.value || '').trim();
+      if (!titleVal) {
+        if (errBox) {
+          errBox.textContent = 'Por favor, informe o Título do compromisso na Agenda.';
+          errBox.classList.remove('hidden');
+        }
+        if (titleInput) titleInput.focus();
+        return false;
+      }
+
+      const rawDate = (document.getElementById('evt-date')?.value || '').trim() || formatIsoDate(agendaYear, agendaMonth, 15);
+      const parts = rawDate.split('-').map(Number);
+      const y = parts[0] || agendaYear || 2026;
+      const mIdx = Math.max(0, Math.min(11, (parts[1] || (agendaMonth + 1)) - 1));
+      const d = Math.max(1, Math.min(31, parts[2] || 15));
+      const timeStr = (document.getElementById('evt-time')?.value || '').trim() || '20:00h';
+      const locVal = (document.getElementById('evt-loc')?.value || '').trim() || 'Sede Comando Central — Galpão Carniceiros MC (Curitiba • PR)';
+      const descVal = (document.getElementById('evt-desc')?.value || '').trim() || 'Compromisso oficial agendado na Agenda Carniceiros MC.';
+      const isMandatory = Boolean(document.getElementById('evt-mandatory')?.checked);
+
+      const newEvent = {
         id: 'evt-' + Date.now(),
-        isoDate: rawDate,
+        isoDate: formatIsoDate(y, mIdx, d),
         day: d,
         monthIndex: mIdx,
         year: y,
-        title: document.getElementById('evt-title').value.trim(),
+        title: titleVal,
         date: `${formatBrDate(y, mIdx, d)} • ${timeStr}`,
-        location: document.getElementById('evt-loc').value.trim(),
-        description: document.getElementById('evt-desc').value.trim(),
-        isMandatory: document.getElementById('evt-mandatory').checked,
+        location: locVal,
+        description: descVal,
+        isMandatory,
         isFixedSecondTuesday: false,
-        flyerKey: pendingFlyerMeta || 'agenda-anexo-sha256.pdf',
+        flyerKey: pendingFlyerMeta || 'Sem anexo externo (pauta interna)',
+        flyerDataUrl: pendingFlyerDataUrl || null,
+        flyerType: pendingFlyerType || null,
         useShieldArt: false
-      });
+      };
+
+      customAgendaEvents.push(newEvent);
+      persistAgendaEvents();
+
       agendaYear = y;
       agendaMonth = mIdx;
-      const sel = document.getElementById('agenda-year-select');
-      if (sel) sel.value = String(y);
-      pendingFlyerMeta = null;
-      document.getElementById('evt-flyer-status').textContent = 'Sem anexo';
-      e.target.reset();
-      toggleElement('modal-new-event');
+      ensureAgendaYearOption(y);
+      persistActiveSession();
+
+      // Limpa formulário e rascunho sem recarregar a página
+      if (titleInput) titleInput.value = '';
+      if (document.getElementById('evt-loc')) document.getElementById('evt-loc').value = '';
+      if (document.getElementById('evt-desc')) document.getElementById('evt-desc').value = '';
+      clearPendingFlyer();
+      clearEventDraft();
+
+      const modal = document.getElementById('modal-new-event');
+      if (modal) modal.classList.add('hidden');
+
       renderEvents();
+      showAgendaBanner(`✓ Compromisso "${titleVal}" (${formatBrDate(y, mIdx, d)} às ${timeStr}) salvo com sucesso na Agenda Carniceiros!`);
+      return false;
+    }
+
+    function loadSavedTasks() {
+      try {
+        const raw = localStorage.getItem(TASKS_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) tasks = parsed;
+      } catch (_e) {}
+    }
+
+    function persistTasks() {
+      try {
+        localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+      } catch (_e) {}
     }
 
     function renderTasks() {
@@ -3050,6 +3490,7 @@
           });
           select.onchange = (ev) => {
             t.status = ev.target.value;
+            persistTasks();
           };
           rightWrap.appendChild(select);
         } else {
@@ -3068,12 +3509,13 @@
 
     function deleteTask(taskId) {
       tasks = tasks.filter(t => t.id !== taskId);
+      persistTasks();
       renderTasks();
     }
 
     function createTask(e) {
-      e.preventDefault();
-      if (!canFullEdit()) return;
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      if (!canFullEdit()) return false;
       tasks.unshift({
         id: 'tsk-' + Date.now(),
         title: document.getElementById('tsk-title').value.trim(),
@@ -3082,9 +3524,11 @@
         status: 'PENDENTE',
         description: document.getElementById('tsk-desc').value.trim()
       });
-      e.target.reset();
+      persistTasks();
+      if (e && e.target && typeof e.target.reset === 'function') e.target.reset();
       toggleElement('modal-new-task');
       renderTasks();
+      return false;
     }
 
     // ===================== MINHA CONTA =====================
@@ -3201,18 +3645,47 @@
       show(true, '200 OK: Senha atualizada. Outras sessões foram encerradas.');
     }
 
+    function loadSavedSuggestions() {
+      try {
+        const raw = localStorage.getItem(SUGGESTIONS_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) suggestions = parsed;
+      } catch (_e) {}
+    }
+
+    function persistSuggestions() {
+      try {
+        localStorage.setItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify(suggestions));
+      } catch (_e) {}
+    }
+
     function validateAttachmentInput(input) {
-      const info = document.getElementById('sug-file-info');
-      const file = input.files && input.files[0];
-      if (!file) return;
-      const ext = file.name.split('.').pop().toLowerCase();
-      if (!['pdf', 'jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
-        info.textContent = 'Erro 415: Tipo MIME bloqueado!';
-        input.value = '';
-        return;
-      }
-      pendingAttachmentMeta = `cmc_${Math.random().toString(16).slice(2, 10)}.${ext} (Magic Bytes OK)`;
-      info.textContent = pendingAttachmentMeta;
+      try {
+        persistActiveSession();
+        const info = document.getElementById('sug-file-info');
+        const file = input && input.files && input.files[0];
+        if (!file) return;
+        const rawName = file.name || 'anexo.jpg';
+        const ext = (rawName.includes('.') ? rawName.split('.').pop() : 'jpg').toLowerCase();
+        const isImg = (file.type && file.type.startsWith('image/')) || ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic'].includes(ext);
+        const isPdf = file.type === 'application/pdf' || ext === 'pdf';
+        if (!isImg && !isPdf) {
+          info.textContent = 'Erro 415: Use Imagem ou PDF!';
+          input.value = '';
+          return;
+        }
+        const sizeKb = Math.max(1, Math.round(file.size / 1024));
+        pendingAttachmentMeta = `${rawName} (${sizeKb} KB)`;
+        info.textContent = `✓ ${pendingAttachmentMeta}`;
+        if (isImg) {
+          compressImageDataUrl(file, function(url) {
+            pendingAttachmentDataUrl = url;
+          });
+        } else {
+          pendingAttachmentDataUrl = null;
+        }
+      } catch (_e) {}
     }
 
     function renderSuggestions() {
@@ -3242,10 +3715,18 @@
         card.appendChild(body);
 
         if (s.attachment) {
+          const attRow = el('div', 'flex items-center justify-between gap-2 pt-1');
           const att = document.createElement('div');
-          att.className = 'font-mono text-xs pt-1 text-[#9e2232] font-bold';
+          att.className = 'font-mono text-xs text-[#9e2232] font-bold';
           att.textContent = `📎 Anexo Blindado: ${s.attachment}`;
-          card.appendChild(att);
+          attRow.appendChild(att);
+          if (s.attachmentDataUrl) {
+            const viewBtn = el('button', 'text-[10px] font-mono px-2 py-0.5 rounded bg-[#060608] border border-[#6b0f1a] text-[#10b981]', '👁 Ver Anexo');
+            viewBtn.type = 'button';
+            viewBtn.onclick = () => openAttachmentViewer(s.subject, s.attachment, s.attachmentDataUrl);
+            attRow.appendChild(viewBtn);
+          }
+          card.appendChild(attRow);
         }
 
         container.appendChild(card);
@@ -3253,20 +3734,33 @@
     }
 
     function submitSuggestion(e) {
-      e.preventDefault();
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      const subjEl = document.getElementById('sug-subject');
+      const contEl = document.getElementById('sug-content');
+      const subj = (subjEl?.value || '').trim();
+      const cont = (contEl?.value || '').trim();
+      if (!subj || !cont) return false;
+
       const m = getActiveMember();
       suggestions.unshift({
         id: 'sug-' + Date.now(),
         author: `${m.roadName} (${m.rankLabel})`,
-        subject: document.getElementById('sug-subject').value.trim(),
-        content: document.getElementById('sug-content').value.trim(),
+        subject: subj,
+        content: cont,
         attachment: pendingAttachmentMeta,
+        attachmentDataUrl: pendingAttachmentDataUrl || null,
         status: 'RECEBIDA'
       });
+      persistSuggestions();
       pendingAttachmentMeta = null;
+      pendingAttachmentDataUrl = null;
       document.getElementById('sug-file-info').textContent = 'Sem anexo';
-      e.target.reset();
+      if (subjEl) subjEl.value = '';
+      if (contEl) contEl.value = '';
+      const fileInp = document.getElementById('sug-file');
+      if (fileInp) fileInp.value = '';
       renderSuggestions();
+      return false;
     }
 
     function renderAll() {
@@ -3285,11 +3779,36 @@
 
     loadSavedPasswords();
     loadSavedMeetings();
+    loadSavedAgendaEvents();
+    loadSavedTasks();
+    loadSavedSuggestions();
     initCrestImages();
     setViewport('auto');
-    selectActiveMember('m-05');
-    showAuthScreen('login');
-    document.getElementById('top-active-member').textContent = 'Selecione seu nome para entrar';
+
+    // Restaura sessão ativa caso a página tenha sido recarregada (ex: após selecionar anexo no celular)
+    (function restoreSessionOnStartup() {
+      try {
+        const raw = localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (saved && saved.hasLoggedInOnce && saved.currentAuthScreen === 'app') {
+            hasLoggedInOnce = true;
+            if (typeof saved.agendaYear === 'number') agendaYear = saved.agendaYear;
+            if (typeof saved.agendaMonth === 'number') agendaMonth = saved.agendaMonth;
+            const targetMember = clubMembers.some(m => m.id === saved.activeMemberId) ? saved.activeMemberId : 'm-05';
+            currentTab = saved.currentTab || 'integrantes';
+            selectActiveMember(targetMember);
+            showAuthScreen('app', true);
+            openTab(currentTab);
+            restoreEventDraftIfOpen();
+            return;
+          }
+        }
+      } catch (_e) {}
+      selectActiveMember('m-05');
+      showAuthScreen('login', true);
+      document.getElementById('top-active-member').textContent = 'Selecione seu nome para entrar';
+    })();
   </script>
 </body>
 </html>
