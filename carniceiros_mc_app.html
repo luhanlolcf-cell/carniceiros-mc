@@ -115,6 +115,55 @@
     </aside>
   </div>
 
+  <!-- MODAL DE UNIFICAÇÃO DO BACKEND EM NUVEM (SUPABASE: WEB + ANDROID APK) -->
+  <div id="modal-cloud-sync" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onclick="if (event.target === this) toggleElement('modal-cloud-sync')">
+    <div class="mc-shield-panel max-w-2xl w-full rounded-lg p-5 space-y-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-[#1a1b20] pb-3">
+        <div>
+          <h2 class="mc-display-font text-sm text-[#e6e6e1]">☁ Backend Unificado (Web + APK Android) — Supabase</h2>
+          <p class="text-xs text-[#8a8c94]">Sincroniza senhas do 1º acesso, fichas de integrantes, reuniões, agenda, tarefas e anexos entre o site e o APK.</p>
+        </div>
+        <button type="button" onclick="toggleElement('modal-cloud-sync')" class="px-2.5 py-1 rounded bg-[#0d0e12] border border-[#6b0f1a] text-xs font-bold text-[#e6e6e1]">✕ Fechar</button>
+      </div>
+
+      <div id="cloud-sync-modal-status" class="text-xs p-3 rounded border border-[#1a1b20] bg-[#020203] font-mono text-[#e6e6e1]"></div>
+
+      <form onsubmit="saveSupabaseConfigForm(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="mc-label" for="inp-supabase-url">Supabase Project URL *</label>
+          <input id="inp-supabase-url" type="url" required placeholder="https://seu-projeto.supabase.co" class="mc-input font-mono" />
+        </div>
+        <div>
+          <label class="mc-label" for="inp-supabase-key">Supabase Anon Public Key *</label>
+          <input id="inp-supabase-key" type="text" required placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="mc-input font-mono" />
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div class="flex flex-wrap gap-2">
+            <button type="submit" class="px-4 py-2 rounded-sm mc-btn-burgundy text-xs">💾 Conectar &amp; Sincronizar Agora</button>
+            <button type="button" onclick="syncAllFromCloud(true)" class="px-3 py-2 rounded-sm border border-[#10b981]/60 bg-[#071f16] text-[#10b981] font-bold uppercase text-xs hover:brightness-110">↻ Forçar Sincronia</button>
+          </div>
+          <button type="button" onclick="copyMobileInviteLink()" class="px-3 py-2 rounded-sm border border-[#6b0f1a] bg-[#060608] text-[#e6e6e1] font-bold uppercase text-[11px] hover:bg-[#170306]">🔗 Copiar Link Unificado</button>
+        </div>
+      </form>
+
+      <div class="bg-[#020203] border border-[#1a1b20] rounded p-3 space-y-2 text-xs">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="font-mono font-bold uppercase text-[#9e2232] text-[11px]">Script SQL da Tabela Unificada (Rode 1x no SQL Editor do Supabase)</span>
+          <button type="button" onclick="copySupabaseSqlScript()" class="px-2.5 py-1 rounded bg-[#060608] border border-[#6b0f1a] text-[11px] font-mono font-bold text-[#e6e6e1] hover:bg-[#6b0f1a]">📋 Copiar SQL</button>
+        </div>
+        <pre id="supabase-sql-preview" class="text-[10px] font-mono text-[#8a8c94] bg-[#050507] p-2.5 rounded border border-[#15161b] overflow-x-auto select-all whitespace-pre-wrap">CREATE TABLE IF NOT EXISTS public.cmc_shared_state (
+  key TEXT PRIMARY KEY,
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_by TEXT
+);
+ALTER TABLE public.cmc_shared_state ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "cmc_shared_state_all" ON public.cmc_shared_state;
+CREATE POLICY "cmc_shared_state_all" ON public.cmc_shared_state FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);</pre>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-crests" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
     <div class="mc-shield-panel max-w-2xl w-full rounded-lg p-5 space-y-4">
       <div class="flex items-center justify-between border-b border-[#1a1b20] pb-3">
@@ -164,6 +213,10 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-cloud-sync" type="button" onclick="openCloudSyncModal()" title="Configurar ou verificar sincronia entre Web e APK Android (Supabase)" class="text-[11px] font-mono px-2.5 py-1.5 rounded-sm border border-[#f59e0b]/70 bg-[#1c1406] text-[#f59e0b] font-bold uppercase tracking-wider transition">
+          ☁ Sync Web/APK
+        </button>
+
         <!-- Detector Automático de Endpoint (Auto / Web / Mobile) -->
         <div class="flex items-center bg-[#060608] border border-[#1a1b20] rounded p-0.5 text-xs">
           <button id="view-btn-auto" onclick="setViewport('auto')" title="Detecta automaticamente pelo User-Agent, Client Hints e Viewport" class="px-2.5 py-1 rounded-sm font-bold uppercase transition">
@@ -1203,7 +1256,292 @@
     let lastRegisteredEmail = '';
     const PW_STORAGE_KEY = 'cmc_member_pwhashes_v1';
     const MEMBER_RECORDS_STORAGE_KEY = 'cmc_member_records_v1';
+    const CUSTOM_MEMBERS_STORAGE_KEY = 'cmc_custom_members_v1';
     const ACTIVE_SESSION_STORAGE_KEY = 'cmc_active_session_v1';
+    const SUPABASE_CONFIG_STORAGE_KEY = 'cmc_supabase_config_v1';
+
+    // Credenciais padrão de nuvem (podem ser preenchidas diretamente aqui ou pelo botão "☁ Sync Web/APK" no topo)
+    let DEFAULT_SUPABASE_URL = '';
+    let DEFAULT_SUPABASE_ANON_KEY = '';
+
+    function getSupabaseConfig() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const qUrl = (params.get('sb_url') || '').trim().replace(/\/+$/, '');
+        const qKey = (params.get('sb_key') || '').trim();
+        if (qUrl && qKey) {
+          const cfg = { url: qUrl, anonKey: qKey };
+          localStorage.setItem(SUPABASE_CONFIG_STORAGE_KEY, JSON.stringify(cfg));
+          return cfg;
+        }
+      } catch (_e) {}
+      try {
+        const raw = localStorage.getItem(SUPABASE_CONFIG_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.url && parsed.anonKey) {
+            return { url: String(parsed.url).trim().replace(/\/+$/, ''), anonKey: String(parsed.anonKey).trim() };
+          }
+        }
+      } catch (_e) {}
+      if (DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_ANON_KEY) {
+        return { url: DEFAULT_SUPABASE_URL.trim().replace(/\/+$/, ''), anonKey: DEFAULT_SUPABASE_ANON_KEY.trim() };
+      }
+      return null;
+    }
+
+    function updateCloudSyncBadge(state, detail) {
+      const btn = document.getElementById('btn-cloud-sync');
+      const statusBox = document.getElementById('cloud-sync-modal-status');
+      if (btn) {
+        if (state === 'online') {
+          btn.className = 'text-[11px] font-mono px-2.5 py-1.5 rounded-sm border border-[#10b981] bg-[#071f16] text-[#10b981] font-bold uppercase tracking-wider transition';
+          btn.textContent = '☁ Web+APK Sincronizados';
+        } else if (state === 'syncing') {
+          btn.className = 'text-[11px] font-mono px-2.5 py-1.5 rounded-sm border border-[#f59e0b] bg-[#1c1406] text-[#f59e0b] font-bold uppercase tracking-wider transition';
+          btn.textContent = '☁ Sincronizando...';
+        } else if (state === 'error') {
+          btn.className = 'text-[11px] font-mono px-2.5 py-1.5 rounded-sm border border-[#6b0f1a] bg-[#170306] text-[#e6e6e1] font-bold uppercase tracking-wider transition';
+          btn.textContent = '☁ Erro Sync (Ver Config)';
+        } else {
+          btn.className = 'text-[11px] font-mono px-2.5 py-1.5 rounded-sm border border-[#f59e0b]/70 bg-[#1c1406] text-[#f59e0b] font-bold uppercase tracking-wider transition';
+          btn.textContent = '☁ Conectar Supabase (Web/APK)';
+        }
+      }
+      if (statusBox && detail) {
+        statusBox.textContent = detail;
+      }
+    }
+
+    async function pushCloudStateKey(key, payload) {
+      const cfg = getSupabaseConfig();
+      if (!cfg) return false;
+      try {
+        const active = typeof getActiveMember === 'function' ? getActiveMember() : null;
+        const res = await fetch(`${cfg.url}/rest/v1/cmc_shared_state?on_conflict=key`, {
+          method: 'POST',
+          headers: {
+            'apikey': cfg.anonKey,
+            'Authorization': `Bearer ${cfg.anonKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify([{
+            key,
+            payload,
+            updated_at: new Date().toISOString(),
+            updated_by: active ? active.roadName : 'APP'
+          }])
+        });
+        if (res.ok) {
+          updateCloudSyncBadge('online', `✓ Sincronizado com Supabase (${new Date().toLocaleTimeString('pt-BR')}) — Web e APK compartilham a mesma base.`);
+          return true;
+        }
+        const errTxt = await res.text();
+        updateCloudSyncBadge('error', `Erro Supabase (${res.status}): Verifique se executou o Script SQL da tabela cmc_shared_state no Supabase. Detalhe: ${errTxt.slice(0, 140)}`);
+      } catch (err) {
+        updateCloudSyncBadge('error', `Sem conexão com o Supabase no momento (modo offline local ativo).`);
+      }
+      return false;
+    }
+
+    async function pushAllLocalStateToCloud() {
+      const cfg = getSupabaseConfig();
+      if (!cfg) return;
+      const rawPw = localStorage.getItem(PW_STORAGE_KEY);
+      const pwMap = rawPw ? JSON.parse(rawPw) : {};
+      clubMembers.forEach(m => {
+        if (m.pwHash) pwMap[m.id] = m.pwHash;
+      });
+      const recRaw = localStorage.getItem(MEMBER_RECORDS_STORAGE_KEY);
+      const recMap = recRaw ? JSON.parse(recRaw) : {};
+      const customRaw = localStorage.getItem(CUSTOM_MEMBERS_STORAGE_KEY);
+      const customList = customRaw ? JSON.parse(customRaw) : [];
+
+      await Promise.all([
+        pushCloudStateKey('pwhashes', pwMap),
+        pushCloudStateKey('member_records', recMap),
+        pushCloudStateKey('custom_members', customList),
+        pushCloudStateKey('meetings', meetings),
+        pushCloudStateKey('agenda_events', customAgendaEvents),
+        pushCloudStateKey('tasks', tasks),
+        pushCloudStateKey('suggestions', suggestions)
+      ]);
+    }
+
+    async function syncAllFromCloud(manualTrigger) {
+      const cfg = getSupabaseConfig();
+      if (!cfg) {
+        updateCloudSyncBadge('unconfigured', '⚠ Supabase ainda não conectado neste dispositivo. Cole a Project URL e a Anon Key abaixo para unificar Web e APK Android.');
+        return false;
+      }
+      if (manualTrigger) updateCloudSyncBadge('syncing', 'Sincronizando dados entre Web e APK Android via Supabase...');
+      try {
+        const res = await fetch(`${cfg.url}/rest/v1/cmc_shared_state?select=key,payload,updated_at`, {
+          method: 'GET',
+          headers: {
+            'apikey': cfg.anonKey,
+            'Authorization': `Bearer ${cfg.anonKey}`,
+            'Accept': 'application/json'
+          },
+          cache: 'no-store'
+        });
+        if (!res.ok) {
+          const errTxt = await res.text();
+          updateCloudSyncBadge('error', `Erro ao consultar Supabase (${res.status}): certifique-se de rodar o Script SQL da tabela cmc_shared_state. (${errTxt.slice(0, 120)})`);
+          return false;
+        }
+        const rows = await res.json();
+        if (!Array.isArray(rows)) return false;
+
+        const mapByKey = {};
+        rows.forEach(r => { if (r && r.key) mapByKey[r.key] = r.payload; });
+
+        // 1. Custom members (novos integrantes ou solicitações PENDENTES)
+        const cloudCustomMembers = Array.isArray(mapByKey.custom_members) ? mapByKey.custom_members : [];
+        const localCustomRaw = localStorage.getItem(CUSTOM_MEMBERS_STORAGE_KEY);
+        const localCustomMembers = localCustomRaw ? JSON.parse(localCustomRaw) : [];
+        const mergedCustomMap = {};
+        localCustomMembers.concat(cloudCustomMembers).forEach(cm => {
+          if (cm && cm.id) mergedCustomMap[cm.id] = cm;
+        });
+        const mergedCustomList = Object.values(mergedCustomMap);
+        localStorage.setItem(CUSTOM_MEMBERS_STORAGE_KEY, JSON.stringify(mergedCustomList));
+        mergedCustomList.forEach(cm => {
+          const existing = clubMembers.find(m => m.id === cm.id);
+          if (existing) Object.assign(existing, cm);
+          else clubMembers.push(cm);
+        });
+
+        // 2. Fichas editadas dos integrantes
+        const cloudRecs = (mapByKey.member_records && typeof mapByKey.member_records === 'object') ? mapByKey.member_records : {};
+        const localRecRaw = localStorage.getItem(MEMBER_RECORDS_STORAGE_KEY);
+        const localRecs = localRecRaw ? JSON.parse(localRecRaw) : {};
+        const mergedRecs = Object.assign({}, localRecs, cloudRecs);
+        localStorage.setItem(MEMBER_RECORDS_STORAGE_KEY, JSON.stringify(mergedRecs));
+        clubMembers.forEach(m => {
+          if (mergedRecs[m.id]) Object.assign(m, mergedRecs[m.id]);
+        });
+
+        // 3. Senhas cadastradas (unifica Web + APK: a senha salva na nuvem prevalece em ambos, inclusive quando resetada para null)
+        const cloudPws = (mapByKey.pwhashes && typeof mapByKey.pwhashes === 'object') ? mapByKey.pwhashes : {};
+        const localPwRaw = localStorage.getItem(PW_STORAGE_KEY);
+        const localPws = localPwRaw ? JSON.parse(localPwRaw) : {};
+        const mergedPws = Object.assign({}, localPws, cloudPws);
+        localStorage.setItem(PW_STORAGE_KEY, JSON.stringify(mergedPws));
+        clubMembers.forEach(m => {
+          m.pwHash = mergedPws[m.id] || null;
+        });
+
+        // Se havia senhas ou dados locais que ainda não estavam na nuvem, sobe para unificar
+        const localHasUnsyncedPw = Object.keys(localPws).some(k => !Object.prototype.hasOwnProperty.call(cloudPws, k));
+        if (localHasUnsyncedPw) {
+          pushCloudStateKey('pwhashes', mergedPws);
+        }
+        if (Object.keys(mergedRecs).length > Object.keys(cloudRecs).length) {
+          pushCloudStateKey('member_records', mergedRecs);
+        }
+        if (mergedCustomList.length > cloudCustomMembers.length) {
+          pushCloudStateKey('custom_members', mergedCustomList);
+        }
+
+        // 4. Reuniões, Agenda, Tarefas e Sugestões
+        if (Array.isArray(mapByKey.meetings) && mapByKey.meetings.length > 0) {
+          meetings = mapByKey.meetings;
+          localStorage.setItem(MEETINGS_STORAGE_KEY, JSON.stringify(meetings));
+        } else if (meetings.length > 0 && !mapByKey.meetings) {
+          pushCloudStateKey('meetings', meetings);
+        }
+
+        if (Array.isArray(mapByKey.agenda_events) && mapByKey.agenda_events.length > 0) {
+          customAgendaEvents = mapByKey.agenda_events;
+          try { localStorage.setItem(AGENDA_EVENTS_STORAGE_KEY, JSON.stringify(customAgendaEvents)); } catch (_e) {}
+        } else if (customAgendaEvents.length > 0 && !mapByKey.agenda_events) {
+          pushCloudStateKey('agenda_events', customAgendaEvents);
+        }
+
+        if (Array.isArray(mapByKey.tasks) && mapByKey.tasks.length > 0) {
+          tasks = mapByKey.tasks;
+          localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+        } else if (tasks.length > 0 && !mapByKey.tasks) {
+          pushCloudStateKey('tasks', tasks);
+        }
+
+        if (Array.isArray(mapByKey.suggestions) && mapByKey.suggestions.length > 0) {
+          suggestions = mapByKey.suggestions;
+          localStorage.setItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify(suggestions));
+        } else if (suggestions.length > 0 && !mapByKey.suggestions) {
+          pushCloudStateKey('suggestions', suggestions);
+        }
+
+        // Re-renderiza a tela atual com os dados unificados sem deslogar
+        if (currentAuthScreen === 'login') {
+          renderLoginMemberList();
+          const pwdInput = document.getElementById('input-login-password');
+          const firstInput = document.getElementById('input-first-password');
+          const typing = (pwdInput && pwdInput.value.length > 0) || (firstInput && firstInput.value.length > 0);
+          if (!typing) {
+            selectLoginMember(selectedLoginMemberId || 'm-05', false);
+          }
+        } else if (currentAuthScreen === 'app') {
+          renderAll();
+        }
+
+        updateCloudSyncBadge('online', `✓ Backend Unificado Ativo (${new Date().toLocaleTimeString('pt-BR')}) — Mesma senha e mesmos dados no Web e no APK Android.`);
+        return true;
+      } catch (_err) {
+        updateCloudSyncBadge('error', 'Falha de rede ao consultar Supabase. Usando cache offline local.');
+        return false;
+      }
+    }
+
+    function openCloudSyncModal() {
+      const cfg = getSupabaseConfig();
+      const urlInp = document.getElementById('inp-supabase-url');
+      const keyInp = document.getElementById('inp-supabase-key');
+      if (urlInp) urlInp.value = cfg ? cfg.url : '';
+      if (keyInp) keyInp.value = cfg ? cfg.anonKey : '';
+      if (cfg) {
+        updateCloudSyncBadge('online', `Conectado a ${cfg.url}. Senhas e dados unificados entre Web e APK.`);
+      } else {
+        updateCloudSyncBadge('unconfigured', 'Informe a Project URL e a Anon Public Key do seu projeto Supabase para unificar Web + APK Android.');
+      }
+      toggleElement('modal-cloud-sync');
+    }
+
+    async function saveSupabaseConfigForm(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const url = (document.getElementById('inp-supabase-url')?.value || '').trim().replace(/\/+$/, '');
+      const anonKey = (document.getElementById('inp-supabase-key')?.value || '').trim();
+      if (!url || !anonKey) return;
+      localStorage.setItem(SUPABASE_CONFIG_STORAGE_KEY, JSON.stringify({ url, anonKey }));
+      updateCloudSyncBadge('syncing', 'Conectando ao Supabase e sincronizando senhas/dados...');
+      const ok = await syncAllFromCloud(true);
+      if (ok) {
+        await pushAllLocalStateToCloud();
+      }
+    }
+
+    function copySupabaseSqlScript() {
+      const sql = document.getElementById('supabase-sql-preview')?.textContent || '';
+      if (navigator.clipboard && sql) {
+        navigator.clipboard.writeText(sql);
+        updateCloudSyncBadge(getSupabaseConfig() ? 'online' : 'unconfigured', '✓ Script SQL copiado! Cole no SQL Editor do Supabase e clique em Run.');
+      }
+    }
+
+    function copyMobileInviteLink() {
+      const cfg = getSupabaseConfig();
+      if (!cfg) {
+        updateCloudSyncBadge('unconfigured', 'Salve primeiro a URL e a Anon Key do Supabase antes de gerar o link.');
+        return;
+      }
+      const shareUrl = `https://luhanlolcf-cell.github.io/carniceiros-mc/?sb_url=${encodeURIComponent(cfg.url)}&sb_key=${encodeURIComponent(cfg.anonKey)}`;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl);
+        updateCloudSyncBadge('online', '✓ Link de autoconfiguração copiado! Ao abrir esse link, o navegador conecta automaticamente no mesmo banco.');
+      }
+    }
 
     function persistActiveSession() {
       try {
@@ -1224,13 +1562,37 @@
       } catch (_e) {}
     }
 
+    function persistCustomMembers() {
+      try {
+        const builtInIds = new Set(['m-01','m-02','m-03','m-04','m-05','m-06','m-07','m-08','m-09','m-10','m-11','m-12','m-13','m-14','m-15','m-16','m-17','m-18','m-19']);
+        const customList = clubMembers.filter(m => !builtInIds.has(m.id));
+        localStorage.setItem(CUSTOM_MEMBERS_STORAGE_KEY, JSON.stringify(customList));
+        pushCloudStateKey('custom_members', customList);
+      } catch (_e) {}
+    }
+
     function loadSavedPasswords() {
+      try {
+        const rawCustom = localStorage.getItem(CUSTOM_MEMBERS_STORAGE_KEY);
+        if (rawCustom) {
+          const customList = JSON.parse(rawCustom);
+          if (Array.isArray(customList)) {
+            customList.forEach(cm => {
+              if (cm && cm.id && !clubMembers.some(m => m.id === cm.id)) {
+                clubMembers.push(cm);
+              }
+            });
+          }
+        }
+      } catch (_e) {}
       try {
         const raw = localStorage.getItem(PW_STORAGE_KEY);
         if (raw) {
           const map = JSON.parse(raw);
           clubMembers.forEach(m => {
-            if (map[m.id]) m.pwHash = map[m.id];
+            if (Object.prototype.hasOwnProperty.call(map, m.id)) {
+              m.pwHash = map[m.id] || null;
+            }
           });
         }
       } catch (_e) {}
@@ -1267,6 +1629,8 @@
           referral: member.referral
         };
         localStorage.setItem(MEMBER_RECORDS_STORAGE_KEY, JSON.stringify(recMap));
+        pushCloudStateKey('member_records', recMap);
+        persistCustomMembers();
       } catch (_e) {}
     }
 
@@ -1274,9 +1638,9 @@
       try {
         const raw = localStorage.getItem(PW_STORAGE_KEY);
         const map = raw ? JSON.parse(raw) : {};
-        if (hash) map[memberId] = hash;
-        else delete map[memberId];
+        map[memberId] = hash || null;
         localStorage.setItem(PW_STORAGE_KEY, JSON.stringify(map));
+        pushCloudStateKey('pwhashes', map);
       } catch (_e) {}
     }
 
@@ -1523,7 +1887,13 @@
       const m = clubMembers.find(x => x.id === selectedLoginMemberId);
       if (!m) return;
       const pw = document.getElementById('input-login-password').value;
-      const passwordOk = m.pwHash ? (await demoHash(pw)) === m.pwHash : pw === DEMO_DEFAULT_PASSWORD;
+      const attemptedHash = await demoHash(pw);
+      let passwordOk = m.pwHash ? attemptedHash === m.pwHash : pw === DEMO_DEFAULT_PASSWORD;
+
+      if (!passwordOk && getSupabaseConfig()) {
+        await syncAllFromCloud(false);
+        passwordOk = m.pwHash ? attemptedHash === m.pwHash : pw === DEMO_DEFAULT_PASSWORD;
+      }
 
       if (!passwordOk) {
         if (remainingLoginAttempts > 1) {
@@ -1620,7 +1990,7 @@
       const protocol = 'CMC-' + Math.random().toString(16).slice(2, 8).toUpperCase();
       const exists = clubMembers.some(m => m.email.toLowerCase() === email);
       if (!exists) {
-        clubMembers.push({
+        const newMember = {
           id: 'm-' + Date.now(),
           roadName: road,
           name,
@@ -1637,7 +2007,10 @@
           requestedAt: new Date().toLocaleDateString('pt-BR'),
           protocol,
           pwHash: await demoHash(pw)
-        });
+        };
+        clubMembers.push(newMember);
+        persistMemberPassword(newMember.id, newMember.pwHash);
+        persistCustomMembers();
       }
       // Resposta idêntica mesmo se o e-mail já existir (evita enumeração de contas)
       lastRegisteredEmail = email;
@@ -2287,6 +2660,7 @@
     function rejectMember(id) {
       if (!canFullEdit()) return;
       clubMembers = clubMembers.filter(x => !(x.id === id && x.status === 'PENDENTE'));
+      persistCustomMembers();
       afterMemberChange(null);
     }
 
@@ -2319,7 +2693,7 @@
         alert('Já existe um integrante com este e-mail.');
         return;
       }
-      clubMembers.push({
+      const newMember = {
         id: 'm-' + Date.now(),
         roadName: document.getElementById('mem-road').value.trim(),
         name: document.getElementById('mem-name').value.trim(),
@@ -2335,10 +2709,13 @@
         referral: getActiveMember().roadName,
         requestedAt: null,
         pwHash: null
-      });
+      };
+      clubMembers.push(newMember);
+      persistCustomMembers();
       e.target.reset();
       toggleElement('modal-new-member');
       renderMembersList();
+      renderLoginMemberList();
     }
 
     // ===================== MÓDULO REUNIÃO (INÍCIO/FIM, CHECKLIST, ATA ANTERIOR & PAUTA ATUAL) =====================
@@ -2361,6 +2738,7 @@
     function persistMeetings() {
       try {
         localStorage.setItem(MEETINGS_STORAGE_KEY, JSON.stringify(meetings));
+        pushCloudStateKey('meetings', meetings);
       } catch (_e) {}
     }
 
@@ -2864,6 +3242,7 @@
           localStorage.setItem(AGENDA_EVENTS_STORAGE_KEY, JSON.stringify(compact));
         } catch (_e2) {}
       }
+      pushCloudStateKey('agenda_events', customAgendaEvents);
     }
 
     function ensureAgendaYearOption(yearNum) {
@@ -3441,6 +3820,7 @@
     function persistTasks() {
       try {
         localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+        pushCloudStateKey('tasks', tasks);
       } catch (_e) {}
     }
 
@@ -3631,7 +4011,12 @@
       const cur = document.getElementById('acc-pw-current').value;
       const nw = document.getElementById('acc-pw-new').value;
       const nw2 = document.getElementById('acc-pw-new2').value;
-      const currentOk = m.pwHash ? (await demoHash(cur)) === m.pwHash : cur === DEMO_DEFAULT_PASSWORD;
+      const curHash = await demoHash(cur);
+      let currentOk = m.pwHash ? curHash === m.pwHash : cur === DEMO_DEFAULT_PASSWORD;
+      if (!currentOk && getSupabaseConfig()) {
+        await syncAllFromCloud(false);
+        currentOk = m.pwHash ? curHash === m.pwHash : cur === DEMO_DEFAULT_PASSWORD;
+      }
       if (!currentOk) return show(false, '401: Senha atual incorreta.');
       if (!paintRules('acc-pw', nw)) return show(false, 'Nova senha fora da política de segurança.');
       if (nw !== nw2) return show(false, 'A confirmação não confere.');
@@ -3642,7 +4027,7 @@
       renderSessions();
       ['acc-pw-current', 'acc-pw-new', 'acc-pw-new2'].forEach(id => { document.getElementById(id).value = ''; });
       paintRules('acc-pw', '');
-      show(true, '200 OK: Senha atualizada. Outras sessões foram encerradas.');
+      show(true, '200 OK: Senha atualizada e sincronizada entre Web e APK Android.');
     }
 
     function loadSavedSuggestions() {
@@ -3657,6 +4042,7 @@
     function persistSuggestions() {
       try {
         localStorage.setItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify(suggestions));
+        pushCloudStateKey('suggestions', suggestions);
       } catch (_e) {}
     }
 
@@ -3808,6 +4194,26 @@
       selectActiveMember('m-05');
       showAuthScreen('login', true);
       document.getElementById('top-active-member').textContent = 'Selecione seu nome para entrar';
+    })();
+
+    // Inicializa sincronização unificada Web + APK Android via Supabase
+    (function initUnifiedCloudSync() {
+      const cfg = getSupabaseConfig();
+      if (cfg) {
+        updateCloudSyncBadge('syncing', 'Sincronizando senhas e dados entre Web e APK Android...');
+        syncAllFromCloud(false);
+      } else {
+        updateCloudSyncBadge('unconfigured');
+      }
+      window.addEventListener('focus', () => {
+        if (getSupabaseConfig()) syncAllFromCloud(false);
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && getSupabaseConfig()) syncAllFromCloud(false);
+      });
+      setInterval(() => {
+        if (!document.hidden && getSupabaseConfig()) syncAllFromCloud(false);
+      }, 15000);
     })();
   </script>
 </body>
