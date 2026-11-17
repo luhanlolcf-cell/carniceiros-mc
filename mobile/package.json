@@ -1,0 +1,17 @@
+{
+  "name": "carniceiros-mc-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicativo Android nativo do Carniceiros MC (Curitiba PR BR)",
+  "scripts": {
+    "prepare:www": "node scripts/prepare-www.js",
+    "sync:android": "node scripts/prepare-www.js && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.10",
+    "@capacitor/core": "7.6.10"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.10"
+  }
+}

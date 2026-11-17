@@ -1,0 +1,14 @@
+{
+  "appId": "br.com.carniceirosmc.app",
+  "appName": "Carniceiros MC",
+  "webDir": "www",
+  "backgroundColor": "#020203",
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#020203",
+    "adjustMarginsForEdgeToEdge": "auto"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}
