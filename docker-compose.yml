@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: carniceiros_mc_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-carniceiros_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ChangeMe_StrongSecret2026!}
+      POSTGRES_DB: ${DB_NAME:-carniceiros_mc}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-carniceiros_admin} -d ${DB_NAME:-carniceiros_mc}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: carniceiros_mc_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${DB_USER:-carniceiros_admin}:${DB_PASSWORD:-ChangeMe_StrongSecret2026!}@postgres:5432/${DB_NAME:-carniceiros_mc}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      CORS_ORIGIN: https://app.carniceirosmc.com.br
+    ports:
+      - "4000:4000"
+
+volumes:
+  pgdata:

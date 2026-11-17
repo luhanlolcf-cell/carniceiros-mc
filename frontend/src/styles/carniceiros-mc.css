@@ -1,0 +1,89 @@
+/* ==========================================================================
+   CARNICEIROS MC (CURITIBA - PR - BR) — ULTRA DARK & BORDÔ ESCURO THEME
+   ========================================================================== */
+
+:root {
+  /* Paleta Ultra-Dark Couro & Bordô Escuro (Sangue Seco / Oxblood) */
+  --cmc-obsidian-black: #030304;     /* Preto obsidiana profundo */
+  --cmc-leather-dark: #070709;       /* Couro noturno para painéis */
+  --cmc-rocker-charcoal: #111216;    /* Chumbo ultra-escuro das faixas */
+  --cmc-smoked-steel: #1f2026;       /* Aço fumê escuro para bordas discretas */
+  --cmc-burgundy: #6b0f1a;           /* Bordô escuro principal */
+  --cmc-burgundy-deep: #3d070e;      /* Bordô profundo / sangue seco */
+  --cmc-burgundy-light: #8c1927;     /* Bordô de destaque para costuras e textos */
+  --cmc-bone-white: #e6e6e1;         /* Branco osso envelhecido */
+  --cmc-ash-muted: #8e9099;          /* Cinza cinza-escuro para subtítulos */
+}
+
+body {
+  background-color: var(--cmc-obsidian-black);
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(107, 15, 26, 0.16), transparent 60%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.01) 0px,
+      rgba(255, 255, 255, 0.01) 2px,
+      transparent 2px,
+      transparent 9px
+    );
+  color: var(--cmc-bone-white);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+}
+
+/* Faixa Rocker (Chumbo Noturno + Costura Bordô Escuro) */
+.cmc-rocker-banner {
+  background: linear-gradient(180deg, #15161b 0%, #0a0b0e 100%);
+  border: 2px solid var(--cmc-burgundy);
+  box-shadow:
+    inset 0 0 0 2px #020203,
+    0 8px 24px rgba(0, 0, 0, 0.92);
+  color: var(--cmc-bone-white);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 900;
+}
+
+/* Moldura de Escudo Rebitado Ultra-Dark */
+.cmc-shield-card {
+  background: linear-gradient(180deg, #0b0c0f 0%, #050507 100%);
+  border: 1.5px solid var(--cmc-smoked-steel);
+  border-top: 3px solid var(--cmc-burgundy);
+  border-radius: 6px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.95);
+  position: relative;
+}
+
+/* Cubo [MC] oficial com borda bordô escuro */
+.cmc-mc-cube {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0e0f13;
+  border: 2px solid var(--cmc-burgundy);
+  color: var(--cmc-bone-white);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+}
+
+/* Botão de Comando em Bordô Escuro */
+.cmc-btn-primary {
+  background: linear-gradient(180deg, #6b0f1a 0%, #3d070e 100%);
+  border: 1px solid #8c1927;
+  color: var(--cmc-bone-white);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  padding: 0.65rem 1.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.cmc-btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+  box-shadow: 0 0 18px rgba(107, 15, 26, 0.65);
+}
