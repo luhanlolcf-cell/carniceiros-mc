@@ -213,83 +213,46 @@
               </h1>
             </div>
             <p class="text-xs text-[#8a8c94] mt-1">
-              Clique no seu nome na lista de integrantes. No <strong>1º acesso</strong>, escolha sua senha; nos próximos, basta digitá-la.
+              Use o e-mail cadastrado pela Secretaria e sua senha para acessar a ferramenta.
             </p>
           </div>
         </div>
-
-        <button type="button" onclick="showAuthScreen('register')" class="px-3.5 py-2 rounded-sm border border-[#6b0f1a] bg-[#060608] text-xs font-bold uppercase tracking-wider text-[#e6e6e1] hover:bg-[#170306] transition">
-          + Solicitar Cadastro (Aspirante)
-        </button>
       </div>
 
-      <div id="login-layout-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        <!-- COLUNA ESQUERDA: LISTA DE INTEGRANTES PARA CLICAR -->
-        <div id="login-col-list" class="lg:col-span-7 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-[#e6e6e1]">
-              1. Clique no seu Nome / Integrante
-            </label>
-            <span id="login-members-counter" class="text-[11px] font-mono text-[#8a8c94]">19 integrantes</span>
-          </div>
-
-          <input id="login-member-search" type="text" oninput="renderLoginMemberList()" placeholder="Filtrar integrante pelo nome ou cargo..."
-            class="mc-input" />
-
-          <div id="login-member-list" class="grid grid-cols-1 gap-2 max-h-[420px] overflow-y-auto pr-1"></div>
-        </div>
-
-        <!-- COLUNA DIREITA: DIGITAR SENHA OU ESCOLHER SENHA NO 1º ACESSO -->
-        <div id="login-col-form" class="lg:col-span-5 bg-[#020203] border-2 border-[#6b0f1a] rounded-lg p-4 space-y-4">
+      <div id="login-layout-grid" class="grid grid-cols-1 gap-5 items-start">
+        <div id="login-col-form" class="bg-[#020203] border-2 border-[#6b0f1a] rounded-lg p-4 space-y-4">
           <div class="flex items-center gap-3 border-b border-[#1a1b20] pb-3">
             <img id="login-selected-crest" alt="Brasão" class="w-12 h-12 object-contain rounded bg-[#060608] border border-[#6b0f1a] p-0.5 flex-shrink-0" />
             <div class="min-w-0 flex-1">
-              <div class="text-[10px] font-mono uppercase tracking-widest text-[#8a8c94]">2. Integrante Selecionado</div>
-              <div id="login-selected-name" class="mc-display-font text-base text-[#e6e6e1] break-words">BOB</div>
-              <div id="login-selected-rank" class="text-xs font-mono text-[#9e2232] font-bold break-words">CONSELHO/SECRETARIA</div>
+              <div class="text-[10px] font-mono uppercase tracking-widest text-[#8a8c94]">Acesso Restrito</div>
+              <div id="login-selected-name" class="mc-display-font text-base text-[#e6e6e1] break-words">CARNICEIROS MC</div>
+              <div id="login-selected-rank" class="text-xs font-mono text-[#9e2232] font-bold break-words">INTEGRANTES AUTORIZADOS</div>
             </div>
           </div>
 
-          <div id="login-mode-banner" class="text-xs rounded p-3 border font-mono"></div>
+          <div id="login-mode-banner" class="text-xs rounded p-3 border border-[#6b0f1a] bg-[#170306] text-[#e6e6e1] font-mono">
+            Informe o e-mail cadastrado pela Secretaria e sua senha.
+          </div>
 
           <div id="login-feedback" class="hidden text-xs p-3 rounded border font-mono"></div>
 
-          <!-- FORMULÁRIO A: 1º ACESSO (ESCOLHER SENHA) -->
-          <form id="login-first-access-form" onsubmit="handleFirstAccessSubmit(event)" class="space-y-3">
+          <form id="login-existing-form" onsubmit="handleInteractiveLogin(event)" class="space-y-3" autocomplete="on">
             <div>
-              <label class="mc-label" for="input-first-password">Escolha sua Senha (1º Acesso) *</label>
-              <input id="input-first-password" type="password" required minlength="4" maxlength="128" oninput="validateFirstAccessLive()"
-                placeholder="Digite a senha que deseja cadastrar..." class="mc-input font-mono" />
+              <label class="mc-label" for="input-login-email">E-mail cadastrado *</label>
+              <input id="input-login-email" type="email" name="username" autocomplete="username" required maxlength="254"
+                placeholder="seu-email@exemplo.com" class="mc-input font-mono" />
             </div>
             <div>
-              <label class="mc-label" for="input-first-password-confirm">Confirme sua Senha *</label>
-              <input id="input-first-password-confirm" type="password" required minlength="4" maxlength="128" oninput="validateFirstAccessLive()"
-                placeholder="Repita a senha escolhida..." class="mc-input font-mono" />
-            </div>
-            <div id="first-pw-match-indicator" class="text-[11px] font-mono text-[#8a8c94]">
-              ○ Digite e confirme sua nova senha (mín. 4 caracteres)
-            </div>
-            <button type="submit" class="w-full py-2.5 px-4 rounded-sm mc-btn-burgundy text-xs">
-              Salvar Senha e Entrar na Ferramenta
-            </button>
-          </form>
-
-          <!-- FORMULÁRIO B: PRÓXIMOS ACESSOS (APENAS DIGITAR A SENHA) -->
-          <form id="login-existing-form" onsubmit="handleInteractiveLogin(event)" class="hidden space-y-3">
-            <div>
-              <label class="mc-label" for="input-login-password">Digite sua Senha *</label>
-              <input id="input-login-password" type="password" required maxlength="128"
-                placeholder="Digite sua senha cadastrada..." class="mc-input font-mono" />
+              <label class="mc-label" for="input-login-password">Senha *</label>
+              <input id="input-login-password" type="password" name="password" autocomplete="current-password" required maxlength="128"
+                placeholder="Digite sua senha..." class="mc-input font-mono" />
             </div>
             <button type="submit" class="w-full py-2.5 px-4 rounded-sm mc-btn-burgundy text-xs">
               Entrar na Ferramenta
             </button>
-            <div class="flex items-center justify-between pt-1 text-[11px] font-mono text-[#8a8c94]">
-              <span>Tentativas: <strong id="login-attempts-left" class="text-[#9e2232]">5</strong></span>
-              <button type="button" onclick="resetSelectedMemberFirstAccess()" class="underline hover:text-[#e6e6e1]">
-                Resetar p/ 1º Acesso
-              </button>
-            </div>
+            <button type="button" onclick="requestPasswordReset()" class="w-full text-[11px] font-mono text-[#8a8c94] underline hover:text-[#e6e6e1]">
+              Esqueci minha senha
+            </button>
           </form>
         </div>
       </div>
@@ -297,103 +260,6 @@
 
     <!-- ================================================================== -->
     <!-- TELA PÚBLICA: SOLICITAR CADASTRO (AUTO-CADASTRO → PENDENTE)        -->
-    <!-- ================================================================== -->
-    <section id="screen-register" class="hidden max-w-xl mx-auto my-4 mc-shield-panel rounded-lg p-6 space-y-5">
-      <div class="flex items-center gap-3 border-b border-[#1a1b20] pb-4">
-        <div class="p-1 rounded bg-[#020203] border-2 border-[#6b0f1a] flex-shrink-0">
-          <img id="register-crest-shield" alt="Escudo Carniceiros PR" class="w-14 h-14 object-contain" />
-        </div>
-        <div class="min-w-0">
-          <div class="mc-rocker-patch inline-block px-3 py-1 rounded-sm">
-            <h1 class="mc-display-font text-xs tracking-widest text-[#e6e6e1]">SOLICITAR CADASTRO</h1>
-          </div>
-          <p class="text-xs text-[#8a8c94] mt-1.5">Carniceiros MC • Curitiba • PR — ficha de aspirante</p>
-        </div>
-      </div>
-
-      <div id="register-form-wrap" class="space-y-4">
-        <div class="text-xs bg-[#040406] border border-[#1a1b20] border-l-4 border-l-[#6b0f1a] rounded p-3 space-y-1 text-[#8a8c94]">
-          <div class="font-bold text-[#e6e6e1] uppercase">Como funciona</div>
-          <div>1. Você preenche a ficha abaixo → <span class="font-mono text-[#f59e0b]">status PENDENTE</span>.</div>
-          <div>2. A Diretoria analisa e aprova (ou recusa) a solicitação.</div>
-          <div>3. Aprovado, você entra como <strong class="text-[#e6e6e1]">Prospect</strong> e o login é liberado.</div>
-        </div>
-
-        <div id="register-feedback" class="hidden text-xs p-3 rounded border font-mono"></div>
-
-        <form id="register-form" onsubmit="submitRegistration(event)" class="space-y-4" autocomplete="off" novalidate>
-          <!-- Honeypot anti-bot: campo invisível que humanos não preenchem -->
-          <div class="hidden" aria-hidden="true">
-            <label>Website <input id="reg-website" tabindex="-1" autocomplete="off" /></label>
-          </div>
-
-          <fieldset class="space-y-2.5">
-            <legend class="text-[10px] font-mono uppercase tracking-widest text-[#9e2232] font-bold mb-1">Identificação</legend>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div><label class="mc-label" for="reg-name">Nome completo *</label><input id="reg-name" maxlength="80" class="mc-input" placeholder="Nome e sobrenome" /></div>
-              <div><label class="mc-label" for="reg-road">Alcunha / Apelido *</label><input id="reg-road" maxlength="30" class="mc-input" placeholder="Como te chamam na estrada" /></div>
-              <div><label class="mc-label" for="reg-email">E-mail (login) *</label><input id="reg-email" type="email" maxlength="120" class="mc-input font-mono" placeholder="voce@email.com" /></div>
-              <div><label class="mc-label" for="reg-phone">WhatsApp *</label><input id="reg-phone" type="tel" maxlength="20" class="mc-input font-mono" placeholder="(41) 99999-0000" /></div>
-              <div><label class="mc-label" for="reg-bike">Moto (marca / modelo)</label><input id="reg-bike" maxlength="50" class="mc-input" placeholder="Ex: Harley Fat Boy 2019" /></div>
-              <div><label class="mc-label" for="reg-referral">Indicação / Padrinho</label><input id="reg-referral" maxlength="40" class="mc-input" placeholder="Quem te apresentou ao clube" /></div>
-            </div>
-          </fieldset>
-
-          <fieldset class="space-y-2.5">
-            <legend class="text-[10px] font-mono uppercase tracking-widest text-[#9e2232] font-bold mb-1">Contato de emergência</legend>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div><label class="mc-label" for="reg-emerg-name">Nome / parentesco *</label><input id="reg-emerg-name" maxlength="60" class="mc-input" placeholder="Ex: Ana (esposa)" /></div>
-              <div><label class="mc-label" for="reg-emerg-phone">Telefone *</label><input id="reg-emerg-phone" type="tel" maxlength="20" class="mc-input font-mono" placeholder="(41) 98888-0000" /></div>
-            </div>
-          </fieldset>
-
-          <fieldset class="space-y-2.5">
-            <legend class="text-[10px] font-mono uppercase tracking-widest text-[#9e2232] font-bold mb-1">Senha de acesso</legend>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div><label class="mc-label" for="reg-pass">Senha *</label><input id="reg-pass" type="password" maxlength="128" oninput="onRegisterPasswordInput()" class="mc-input font-mono" /></div>
-              <div><label class="mc-label" for="reg-pass2">Confirmar senha *</label><input id="reg-pass2" type="password" maxlength="128" oninput="updateRegisterMatch()" class="mc-input font-mono" /></div>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-xs bg-[#020203] p-2.5 rounded border border-[#15161b] font-mono">
-              <div id="reg-pw-len" class="flex items-center gap-1.5"><span>○</span> Mín. 8</div>
-              <div id="reg-pw-upper" class="flex items-center gap-1.5"><span>○</span> Maiúscula</div>
-              <div id="reg-pw-lower" class="flex items-center gap-1.5"><span>○</span> Minúscula</div>
-              <div id="reg-pw-num" class="flex items-center gap-1.5"><span>○</span> Número</div>
-              <div id="reg-pw-spec" class="flex items-center gap-1.5"><span>○</span> Símbolo</div>
-              <div id="reg-pw-match" class="flex items-center gap-1.5"><span>○</span> Confere</div>
-            </div>
-          </fieldset>
-
-          <label class="flex items-start gap-2 text-xs text-[#8a8c94] cursor-pointer">
-            <input id="reg-terms" type="checkbox" class="mt-0.5 accent-[#6b0f1a]" />
-            <span>Li o estatuto do Carniceiros MC e autorizo o uso dos meus dados apenas para gestão interna do clube (LGPD).</span>
-          </label>
-
-          <div class="flex flex-col-reverse sm:flex-row gap-2 pt-1">
-            <button type="button" onclick="showAuthScreen('login')" class="sm:w-1/3 py-2.5 rounded-sm border border-[#1a1b20] bg-[#060608] text-xs font-bold uppercase text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a]">‹ Voltar ao Login</button>
-            <button type="submit" class="flex-1 py-2.5 rounded-sm mc-btn-burgundy text-xs">Enviar Solicitação à Diretoria</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Confirmação após envio -->
-      <div id="register-success" class="hidden text-center space-y-4 py-2">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#1c1406] border-2 border-[#f59e0b] text-2xl">⏳</div>
-        <h2 class="mc-display-font text-sm text-[#e6e6e1]">Solicitação enviada!</h2>
-        <p class="text-xs text-[#8a8c94] max-w-sm mx-auto">
-          Sua ficha está <span class="font-mono text-[#f59e0b] font-bold">AGUARDANDO APROVAÇÃO</span> da Diretoria.
-          Você será avisado pelo WhatsApp/e-mail informado. Até lá o login permanece bloqueado.
-        </p>
-        <div class="inline-block text-xs font-mono bg-[#020203] border border-[#1a1b20] rounded px-3 py-2 text-[#e6e6e1]">
-          Protocolo: <span id="register-protocol" class="text-[#9e2232] font-bold"></span>
-        </div>
-        <div>
-          <button type="button" onclick="goToLoginAfterRegister()" class="px-5 py-2.5 rounded-sm mc-btn-burgundy text-xs">Ir para o Login</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================================================================== -->
-    <!-- LAYOUT PRINCIPAL: MENU LATERAL DE COMANDO + CONTEÚDO DO MÓDULO     -->
     <!-- ================================================================== -->
     <div id="screen-app" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
@@ -798,8 +664,8 @@
             </div>
 
             <form onsubmit="submitSuggestion(event); return false;" class="space-y-3 text-xs">
-              <input id="sug-subject" required placeholder="Assunto da sugestão ou anexo..." class="w-full px-3 py-2 rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]" />
-              <textarea id="sug-content" rows="2" required placeholder="Descreva sua ideia ou observação para a Diretoria..." class="w-full px-3 py-2 rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]"></textarea>
+              <input id="sug-subject" required maxlength="160" placeholder="Assunto da sugestão ou anexo..." class="w-full px-3 py-2 rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]" />
+              <textarea id="sug-content" rows="2" required maxlength="5000" placeholder="Descreva sua ideia ou observação para a Diretoria..." class="w-full px-3 py-2 rounded bg-[#020203] border border-[#1a1b20] text-[#e6e6e1]"></textarea>
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                   <label onclick="persistActiveSession();" class="px-3 py-1.5 rounded border border-[#6b0f1a] bg-[#060608] cursor-pointer font-bold">
@@ -906,33 +772,32 @@
 
     // LISTA ÚNICA DE INTEGRANTES (DIRETORIA, FULL PATCH E PROSPECTS JUNTOS)
     let clubMembers = [
-      { id: 'm-01', roadName: 'ARTUR', name: 'Artur — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/PRESIDENTE', phone: '+55 (41) 99901-0001', email: 'artur@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Road King', joinedAt: 'Fundador', status: 'ATIVO', origin: 'DIRETORIA', referral: 'Comando', requestedAt: null, pwHash: null },
-      { id: 'm-02', roadName: 'TONY', name: 'Tony — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/VICE PRESIDENTE', phone: '+55 (41) 99901-0002', email: 'tony@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Fat Boy', joinedAt: 'Fundador', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-03', roadName: 'DANIEL', name: 'Daniel — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/DICIPLINA', phone: '+55 (41) 99901-0003', email: 'daniel@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Breakout', joinedAt: 'Diretoria', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-04', roadName: 'NAMIR', name: 'Namir — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/FINANCEIRO', phone: '+55 (41) 99901-0004', email: 'namir@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Heritage Classic', joinedAt: 'Diretoria', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-05', roadName: 'BOB', name: 'Bob — Carniceiros MC', role: 'DIRETORIA', category: 'CONSELHO', rankLabel: 'CONSELHO/SECRETARIA', phone: '+55 (41) 99901-0005', email: 'bob@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Indian Chief Dark Horse', joinedAt: 'Conselho', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null, pwHash: null },
-      { id: 'm-06', roadName: 'GUILHERME', name: 'Guilherme — Carniceiros MC', role: 'MEMBRO', category: 'CONSELHO', rankLabel: 'CONSELHO/ESTOQUE&INVENTÁRIO', phone: '+55 (41) 99901-0006', email: 'guilherme@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Street Bob', joinedAt: 'Conselho', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-07', roadName: 'GILBERTO', name: 'Gilberto — Carniceiros MC', role: 'MEMBRO', category: 'CONSELHO', rankLabel: 'CONSELHO/MANUTENÇÃO', phone: '+55 (41) 99901-0007', email: 'gilberto@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Low Rider S', joinedAt: 'Conselho', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null, pwHash: null },
-      { id: 'm-08', roadName: 'BINHO', name: 'Binho — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'MENSALIDADE', phone: '+55 (41) 99901-0008', email: 'binho@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Dyna Super Glide', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'NAMIR', requestedAt: null, pwHash: null },
-      { id: 'm-09', roadName: 'DILSON', name: 'Dilson — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0009', email: 'dilson@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Softail Slim', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-10', roadName: 'EDUARDO', name: 'Eduardo — Carniceiros MC', role: 'PROSPECT', category: 'PROSPERO', rankLabel: 'PROSPERO', phone: '+55 (41) 99901-0010', email: 'eduardo@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Honda Shadow 750', joinedAt: 'Próspero', status: 'ATIVO', origin: 'AUTO_CADASTRO', referral: 'DANIEL', requestedAt: '10/2026', pwHash: null },
-      { id: 'm-11', roadName: 'MARCINHO', name: 'Marcinho — Carniceiros MC', role: 'PROSPECT', category: 'PROSPERO', rankLabel: 'PROSPERO', phone: '+55 (41) 99901-0011', email: 'marcinho@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Yamaha Drag Star 650', joinedAt: 'Próspero', status: 'ATIVO', origin: 'AUTO_CADASTRO', referral: 'BOB', requestedAt: '10/2026', pwHash: null },
-      { id: 'm-12', roadName: 'NEGO', name: 'Nego — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0012', email: 'nego@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Night Rod', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-13', roadName: 'RATO', name: 'Rato — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0013', email: 'rato@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Iron 883', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null, pwHash: null },
-      { id: 'm-14', roadName: 'TUTTY', name: 'Tutty — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0014', email: 'tutty@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Fat Bob', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'DANIEL', requestedAt: null, pwHash: null },
-      { id: 'm-15', roadName: 'ZEQUINHA', name: 'Zequinha — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0015', email: 'zequinha@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Triumph Bonneville Bobber', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'BOB', requestedAt: null, pwHash: null },
-      { id: 'm-16', roadName: 'PEREIRA', name: 'Pereira — Carniceiros MC', role: 'MEMBRO', category: 'MEIO ESCUDO', rankLabel: 'MEIO ESCUDO', phone: '+55 (41) 99901-0016', email: 'pereira@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Kawasaki Vulcan 900', joinedAt: 'Meio Escudo', status: 'ATIVO', origin: 'DIRETORIA', referral: 'DILSON', requestedAt: null, pwHash: null },
-      { id: 'm-17', roadName: 'BIFF', name: 'Biff — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0017', email: 'biff@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Sportster 1200', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'NEGO', requestedAt: null, pwHash: null },
-      { id: 'm-18', roadName: 'GRIILO', name: 'Griilo — Carniceiros MC', role: 'MEMBRO', category: 'NOMAD', rankLabel: 'FULL PATCH - NOMAD', phone: '+55 (41) 99901-0018', email: 'griilo@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Street Glide', joinedAt: 'Full Patch Nomad', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null, pwHash: null },
-      { id: 'm-19', roadName: 'SAMUCA', name: 'Samuca — Carniceiros MC', role: 'MEMBRO', category: 'NOMAD', rankLabel: 'FULL PATCH NOMAD', phone: '+55 (41) 99901-0019', email: 'samuca@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Electra Glide', joinedAt: 'Full Patch Nomad', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null, pwHash: null }
+      { id: 'm-01', roadName: 'ARTUR', name: 'Artur — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/PRESIDENTE', phone: '+55 (41) 99901-0001', email: 'artur@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Road King', joinedAt: 'Fundador', status: 'ATIVO', origin: 'DIRETORIA', referral: 'Comando', requestedAt: null },
+      { id: 'm-02', roadName: 'TONY', name: 'Tony — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/VICE PRESIDENTE', phone: '+55 (41) 99901-0002', email: 'tony@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Fat Boy', joinedAt: 'Fundador', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-03', roadName: 'DANIEL', name: 'Daniel — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/DICIPLINA', phone: '+55 (41) 99901-0003', email: 'daniel@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Breakout', joinedAt: 'Diretoria', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-04', roadName: 'NAMIR', name: 'Namir — Carniceiros MC', role: 'MEMBRO', category: 'DIRETORIA', rankLabel: 'DIRETORIA/FINANCEIRO', phone: '+55 (41) 99901-0004', email: 'namir@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Heritage Classic', joinedAt: 'Diretoria', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-05', roadName: 'BOB', name: 'Bob — Carniceiros MC', role: 'DIRETORIA', category: 'CONSELHO', rankLabel: 'CONSELHO/SECRETARIA', phone: '+55 (41) 99901-0005', email: 'bob@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Indian Chief Dark Horse', joinedAt: 'Conselho', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null },
+      { id: 'm-06', roadName: 'GUILHERME', name: 'Guilherme — Carniceiros MC', role: 'MEMBRO', category: 'CONSELHO', rankLabel: 'CONSELHO/ESTOQUE&INVENTÁRIO', phone: '+55 (41) 99901-0006', email: 'guilherme@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Street Bob', joinedAt: 'Conselho', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-07', roadName: 'GILBERTO', name: 'Gilberto — Carniceiros MC', role: 'MEMBRO', category: 'CONSELHO', rankLabel: 'CONSELHO/MANUTENÇÃO', phone: '+55 (41) 99901-0007', email: 'gilberto@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Low Rider S', joinedAt: 'Conselho', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null },
+      { id: 'm-08', roadName: 'BINHO', name: 'Binho — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'MENSALIDADE', phone: '+55 (41) 99901-0008', email: 'binho@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Dyna Super Glide', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'NAMIR', requestedAt: null },
+      { id: 'm-09', roadName: 'DILSON', name: 'Dilson — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0009', email: 'dilson@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Softail Slim', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-10', roadName: 'EDUARDO', name: 'Eduardo — Carniceiros MC', role: 'PROSPECT', category: 'PROSPERO', rankLabel: 'PROSPERO', phone: '+55 (41) 99901-0010', email: 'eduardo@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Honda Shadow 750', joinedAt: 'Próspero', status: 'ATIVO', origin: 'AUTO_CADASTRO', referral: 'DANIEL', requestedAt: '10/2026' },
+      { id: 'm-11', roadName: 'MARCINHO', name: 'Marcinho — Carniceiros MC', role: 'PROSPECT', category: 'PROSPERO', rankLabel: 'PROSPERO', phone: '+55 (41) 99901-0011', email: 'marcinho@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Yamaha Drag Star 650', joinedAt: 'Próspero', status: 'ATIVO', origin: 'AUTO_CADASTRO', referral: 'BOB', requestedAt: '10/2026' },
+      { id: 'm-12', roadName: 'NEGO', name: 'Nego — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0012', email: 'nego@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Night Rod', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-13', roadName: 'RATO', name: 'Rato — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0013', email: 'rato@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Iron 883', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null },
+      { id: 'm-14', roadName: 'TUTTY', name: 'Tutty — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0014', email: 'tutty@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Fat Bob', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'DANIEL', requestedAt: null },
+      { id: 'm-15', roadName: 'ZEQUINHA', name: 'Zequinha — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0015', email: 'zequinha@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Triumph Bonneville Bobber', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'BOB', requestedAt: null },
+      { id: 'm-16', roadName: 'PEREIRA', name: 'Pereira — Carniceiros MC', role: 'MEMBRO', category: 'MEIO ESCUDO', rankLabel: 'MEIO ESCUDO', phone: '+55 (41) 99901-0016', email: 'pereira@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Kawasaki Vulcan 900', joinedAt: 'Meio Escudo', status: 'ATIVO', origin: 'DIRETORIA', referral: 'DILSON', requestedAt: null },
+      { id: 'm-17', roadName: 'BIFF', name: 'Biff — Carniceiros MC', role: 'MEMBRO', category: 'FULL PATCH', rankLabel: 'FULL PATCH', phone: '+55 (41) 99901-0017', email: 'biff@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Sportster 1200', joinedAt: 'Full Patch', status: 'ATIVO', origin: 'DIRETORIA', referral: 'NEGO', requestedAt: null },
+      { id: 'm-18', roadName: 'GRIILO', name: 'Griilo — Carniceiros MC', role: 'MEMBRO', category: 'NOMAD', rankLabel: 'FULL PATCH - NOMAD', phone: '+55 (41) 99901-0018', email: 'griilo@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Street Glide', joinedAt: 'Full Patch Nomad', status: 'ATIVO', origin: 'DIRETORIA', referral: 'ARTUR', requestedAt: null },
+      { id: 'm-19', roadName: 'SAMUCA', name: 'Samuca — Carniceiros MC', role: 'MEMBRO', category: 'NOMAD', rankLabel: 'FULL PATCH NOMAD', phone: '+55 (41) 99901-0019', email: 'samuca@carniceirosmc.com.br', emergency: 'Contato de emergência cadastrado na Secretaria', bike: 'Harley-Davidson Electra Glide', joinedAt: 'Full Patch Nomad', status: 'ATIVO', origin: 'DIRETORIA', referral: 'TONY', requestedAt: null }
     ];
 
-    // Senha demo dos integrantes pré-cadastrados (no backend real: hash Argon2id no PostgreSQL)
-    const DEMO_DEFAULT_PASSWORD = 'Carniceiros#2026';
-
-    let activeMemberId = 'm-05'; // Inicia como BOB (CONSELHO/SECRETARIA — Único com Permissão Full Edição)
+    let activeMemberId = 'm-05';
+    let currentAuthProfile = null;
+    let supabaseSession = null;
+    let cloudSyncStarted = false;
     let currentTab = 'integrantes';
-    let remainingLoginAttempts = 5;
     let pendingFlyerMeta = null;
     let pendingAttachmentMeta = null;
 
@@ -1052,10 +917,9 @@
       return clubMembers.find(m => m.id === activeMemberId) || clubMembers[0];
     }
 
-    // APENAS BOB possui permissão de Full Edição no sistema (inclusive para editar a Ficha de qualquer Integrante)
-    function canFullEdit(member) {
-      const m = member || getActiveMember();
-      return Boolean(m && (m.id === 'm-05' || m.roadName === 'BOB'));
+    // APENAS o perfil autenticado com permissão administrativa pode editar os dados do clube
+    function canFullEdit() {
+      return !!currentAuthProfile && currentAuthProfile.can_full_edit === true && currentAuthProfile.active === true;
     }
 
     function getRoleSummary() {
@@ -1088,7 +952,7 @@
     let lastDetectedPlatform = {
       type: 'WEB',
       os: 'DESKTOP',
-      authTransport: 'HTTPONLY_COOKIE',
+      authTransport: 'SUPABASE_AUTH_TOKEN',
       detectedBy: 'USER_AGENT'
     };
 
@@ -1120,7 +984,7 @@
         return {
           type: 'WEB',
           os: 'DESKTOP',
-          authTransport: 'HTTPONLY_COOKIE',
+          authTransport: 'SUPABASE_AUTH_TOKEN',
           detectedBy: 'HEADER_EXPLICIT (X-Client-Platform: web)'
         };
       }
@@ -1143,7 +1007,7 @@
       return {
         type: 'WEB',
         os: 'DESKTOP',
-        authTransport: 'HTTPONLY_COOKIE',
+        authTransport: 'SUPABASE_AUTH_TOKEN',
         detectedBy: 'AUTO_USER_AGENT_DESKTOP'
       };
     }
@@ -1174,7 +1038,6 @@
       }
 
       const loginGrid = document.getElementById('login-layout-grid');
-      const loginColList = document.getElementById('login-col-list');
       const loginColForm = document.getElementById('login-col-form');
 
       if (detected.type === 'MOBILE') {
@@ -1182,18 +1045,13 @@
         sidebar.className = 'col-span-12 mc-shield-panel rounded-lg p-3 space-y-3';
         main.className = 'col-span-12 space-y-4';
         if (loginGrid) loginGrid.className = 'grid grid-cols-1 gap-4 items-start';
-        if (loginColList) loginColList.className = 'col-span-1 space-y-3';
         if (loginColForm) loginColForm.className = 'col-span-1 bg-[#020203] border-2 border-[#6b0f1a] rounded-lg p-4 space-y-4';
       } else {
         wrapper.className = 'max-w-7xl w-full mx-auto flex-1 transition-all duration-200 p-4';
         sidebar.className = 'lg:col-span-3 mc-shield-panel rounded-lg p-3.5 space-y-4';
         main.className = 'lg:col-span-9 space-y-4';
-        if (loginGrid) loginGrid.className = 'grid grid-cols-1 lg:grid-cols-12 gap-5 items-start';
-        if (loginColList) loginColList.className = 'lg:col-span-7 space-y-3';
-        if (loginColForm) loginColForm.className = 'lg:col-span-5 bg-[#020203] border-2 border-[#6b0f1a] rounded-lg p-4 space-y-4 sticky top-20';
-      }
-      if (typeof renderLoginMemberList === 'function') {
-        renderLoginMemberList();
+        if (loginGrid) loginGrid.className = 'grid grid-cols-1 gap-5 items-start';
+        if (loginColForm) loginColForm.className = 'bg-[#020203] border-2 border-[#6b0f1a] rounded-lg p-4 space-y-4';
       }
       if (typeof renderMembersList === 'function' && document.getElementById('members-stats')) {
         renderMembersList();
@@ -1201,12 +1059,10 @@
       }
     }
 
-    // ===================== AUTENTICAÇÃO: ESCOLHER INTEGRANTE + 1º ACESSO / SENHA =====================
+    // ===================== AUTENTICAÇÃO: SUPABASE AUTH =====================
     let currentAuthScreen = 'login';
-    let selectedLoginMemberId = 'm-05'; // BOB pré-selecionado na lista de login
     let hasLoggedInOnce = false;
-    let lastRegisteredEmail = '';
-    const PW_STORAGE_KEY = 'cmc_member_pwhashes_v1';
+    const AUTH_SESSION_STORAGE_KEY = 'cmc_supabase_auth_session_v1';
     const MEMBER_RECORDS_STORAGE_KEY = 'cmc_member_records_v1';
     const CUSTOM_MEMBERS_STORAGE_KEY = 'cmc_custom_members_v1';
     const ACTIVE_SESSION_STORAGE_KEY = 'cmc_active_session_v1';
@@ -1215,7 +1071,6 @@
     const UNIFIED_BACKEND_KEY = 'sb_publishable_SxGmPCA_1qAcPml5yxvchA_mkwjfdFY';
     const BUILTIN_MEMBER_IDS = new Set(['m-01','m-02','m-03','m-04','m-05','m-06','m-07','m-08','m-09','m-10','m-11','m-12','m-13','m-14','m-15','m-16','m-17','m-18','m-19']);
 
-    let initialCloudSyncPromise = null;
     let cloudWriteInFlightCount = 0;
     let lastCloudSnapshotSig = '';
     let pendingCloudUiRefresh = false;
@@ -1226,11 +1081,170 @@
 
     function buildSupabaseHeaders(cfg, extra) {
       const headers = Object.assign({ 'apikey': cfg.anonKey }, extra || {});
-      // Chaves publishable (sb_publishable_*) não são JWT — vão apenas no header apikey; JWT legado (eyJ*) também vai em Authorization
-      if (cfg.anonKey && cfg.anonKey.startsWith('eyJ')) {
+      const accessToken = supabaseSession && supabaseSession.access_token;
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      } else if (cfg.anonKey && cfg.anonKey.startsWith('eyJ')) {
         headers['Authorization'] = `Bearer ${cfg.anonKey}`;
       }
       return headers;
+    }
+
+    function readStoredAuthSession() {
+      try {
+        const raw = localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (_e) {
+        return null;
+      }
+    }
+
+    function storeAuthSession(session) {
+      supabaseSession = session;
+      try { localStorage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(session)); } catch (_e) {}
+    }
+
+    function clearAuthSession() {
+      supabaseSession = null;
+      currentAuthProfile = null;
+      try { localStorage.removeItem(AUTH_SESSION_STORAGE_KEY); } catch (_e) {}
+    }
+
+    async function refreshSupabaseSession() {
+      if (!supabaseSession || !supabaseSession.refresh_token) return false;
+      const cfg = getSupabaseConfig();
+      try {
+        const res = await fetch(`${cfg.url}/auth/v1/token?grant_type=refresh_token`, {
+          method: 'POST',
+          headers: { 'apikey': cfg.anonKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: supabaseSession.refresh_token })
+        });
+        if (!res.ok) {
+          clearAuthSession();
+          return false;
+        }
+        const data = await res.json();
+        storeAuthSession(Object.assign({}, data, { expires_at: Date.now() + data.expires_in * 1000 }));
+        return true;
+      } catch (_e) {
+        return false;
+      }
+    }
+
+    async function ensureSupabaseSession() {
+      if (!supabaseSession) supabaseSession = readStoredAuthSession();
+      if (!supabaseSession || !supabaseSession.access_token) return false;
+      if (supabaseSession.expires_at <= Date.now() + 60000 && !await refreshSupabaseSession()) return false;
+      if (!supabaseSession.user && !await hydrateSupabaseUser()) return false;
+      return true;
+    }
+
+    async function hydrateSupabaseUser() {
+      const cfg = getSupabaseConfig();
+      try {
+        const res = await fetch(`${cfg.url}/auth/v1/user`, {
+          headers: { 'apikey': cfg.anonKey, 'Authorization': `Bearer ${supabaseSession.access_token}` }
+        });
+        if (!res.ok) return false;
+        supabaseSession.user = await res.json();
+        storeAuthSession(supabaseSession);
+        return true;
+      } catch (_e) {
+        return false;
+      }
+    }
+
+    async function supabaseRequest(path, options, retryOnUnauthorized) {
+      const cfg = getSupabaseConfig();
+      if (!await ensureSupabaseSession()) throw new Error('AUTH_REQUIRED');
+      const requestOptions = Object.assign({}, options || {});
+      requestOptions.headers = buildSupabaseHeaders(cfg, requestOptions.headers);
+      const res = await fetch(`${cfg.url}${path}`, requestOptions);
+      if (res.status === 401 && retryOnUnauthorized !== false && await refreshSupabaseSession()) {
+        return supabaseRequest(path, requestOptions, false);
+      }
+      return res;
+    }
+
+    async function getCurrentAuthProfile() {
+      if (!supabaseSession || !supabaseSession.user || !supabaseSession.user.id) return null;
+      const res = await supabaseRequest(`/rest/v1/profiles?id=eq.${encodeURIComponent(supabaseSession.user.id)}&select=legacy_member_id,active,can_full_edit,display_name`);
+      if (!res.ok) return null;
+      const rows = await res.json();
+      return Array.isArray(rows) && rows.length === 1 ? rows[0] : null;
+    }
+
+    async function signInWithPassword(email, password) {
+      const cfg = getSupabaseConfig();
+      const res = await fetch(`${cfg.url}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: { 'apikey': cfg.anonKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error_description || data.msg || 'E-mail ou senha inválidos.');
+      }
+      storeAuthSession(Object.assign({}, data, { expires_at: Date.now() + data.expires_in * 1000 }));
+      const profile = await getCurrentAuthProfile();
+      if (!profile || !profile.active) {
+        clearAuthSession();
+        throw new Error('Este acesso ainda não está ativo. Procure a Secretaria.');
+      }
+      const member = clubMembers.find(m => m.id === profile.legacy_member_id);
+      if (!member) {
+        clearAuthSession();
+        throw new Error('O perfil autenticado não está vinculado a um integrante.');
+      }
+      currentAuthProfile = profile;
+      activeMemberId = member.id;
+      return member;
+    }
+
+    async function requestPasswordReset(email) {
+      const normalizedEmail = String(email || '').trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(normalizedEmail)) {
+        throw new Error('Informe um e-mail válido para receber a redefinição.');
+      }
+      const cfg = getSupabaseConfig();
+      const body = { email: normalizedEmail };
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        body.redirect_to = window.location.origin;
+      }
+      const res = await fetch(`${cfg.url}/auth/v1/recover`, {
+        method: 'POST',
+        headers: { 'apikey': cfg.anonKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error('Não foi possível enviar o e-mail de redefinição.');
+    }
+
+    async function logout() {
+      const cfg = getSupabaseConfig();
+      if (supabaseSession && supabaseSession.access_token) {
+        try {
+          await fetch(`${cfg.url}/auth/v1/logout`, {
+            method: 'POST',
+            headers: buildSupabaseHeaders(cfg)
+          });
+        } catch (_e) {}
+      }
+      clearAuthSession();
+      hasLoggedInOnce = false;
+      activeMemberId = 'm-05';
+      clearActiveSession();
+      showAuthScreen('login');
+    }
+
+    async function enterAuthenticatedApp(member) {
+      hasLoggedInOnce = true;
+      activeMemberId = member.id;
+      currentAuthScreen = 'app';
+      persistActiveSession();
+      await syncAllFromCloud(true);
+      selectActiveMember(member.id);
+      showAuthScreen('app');
+      startUnifiedCloudSync();
     }
 
     function isUserActivelyEditing() {
@@ -1266,11 +1280,10 @@
     }
 
     async function fetchCloudStateKey(key) {
-      const cfg = getSupabaseConfig();
       try {
-        const res = await fetch(`${cfg.url}/rest/v1/cmc_shared_state?key=eq.${encodeURIComponent(key)}&select=payload`, {
+        const res = await supabaseRequest(`/rest/v1/cmc_shared_state?key=eq.${encodeURIComponent(key)}&select=payload`, {
           method: 'GET',
-          headers: buildSupabaseHeaders(cfg, { 'Accept': 'application/json' }),
+          headers: { 'Accept': 'application/json' },
           cache: 'no-store'
         });
         if (!res.ok) return { ok: false, exists: false, payload: null };
@@ -1285,16 +1298,15 @@
     }
 
     async function pushCloudStateKey(key, payload) {
-      const cfg = getSupabaseConfig();
       cloudWriteInFlightCount++;
       try {
         const active = typeof getActiveMember === 'function' ? getActiveMember() : null;
-        const res = await fetch(`${cfg.url}/rest/v1/cmc_shared_state?on_conflict=key`, {
+        const res = await supabaseRequest('/rest/v1/cmc_shared_state?on_conflict=key', {
           method: 'POST',
-          headers: buildSupabaseHeaders(cfg, {
+          headers: {
             'Content-Type': 'application/json',
             'Prefer': 'resolution=merge-duplicates,return=minimal'
-          }),
+          },
           body: JSON.stringify([{
             key,
             payload,
@@ -1316,7 +1328,7 @@
       return false;
     }
 
-    // Read-Merge-Write seguro para mapas (pwhashes / member_records): evita sobrescrever outro integrante entre Web e APK
+    // Read-Merge-Write para mapas de integrantes: evita sobrescrever outro integrante entre Web e APK
     async function mergeAndPushCloudMap(stateKey, storageKey, patchObj) {
       cloudWriteInFlightCount++;
       try {
@@ -1333,14 +1345,13 @@
         const merged = Object.assign({}, localMap, cloudMap, patchObj);
         try { localStorage.setItem(storageKey, JSON.stringify(merged)); } catch (_e) {}
 
-        const cfg = getSupabaseConfig();
         const active = typeof getActiveMember === 'function' ? getActiveMember() : null;
-        const res = await fetch(`${cfg.url}/rest/v1/cmc_shared_state?on_conflict=key`, {
+        const res = await supabaseRequest('/rest/v1/cmc_shared_state?on_conflict=key', {
           method: 'POST',
-          headers: buildSupabaseHeaders(cfg, {
+          headers: {
             'Content-Type': 'application/json',
             'Prefer': 'resolution=merge-duplicates,return=minimal'
-          }),
+          },
           body: JSON.stringify([{
             key: stateKey,
             payload: merged,
@@ -1364,12 +1375,12 @@
     }
 
     async function syncAllFromCloud(forceSync) {
+      if (!await ensureSupabaseSession()) return false;
       if (!forceSync && cloudWriteInFlightCount > 0) return false;
-      const cfg = getSupabaseConfig();
       try {
-        const res = await fetch(`${cfg.url}/rest/v1/cmc_shared_state?select=key,payload,updated_at`, {
+        const res = await supabaseRequest('/rest/v1/cmc_shared_state?select=key,payload,updated_at', {
           method: 'GET',
-          headers: buildSupabaseHeaders(cfg, { 'Accept': 'application/json' }),
+          headers: { 'Accept': 'application/json' },
           cache: 'no-store'
         });
         if (!res.ok) {
@@ -1418,25 +1429,7 @@
           pushCloudStateKey('member_records', mergedRecs);
         }
 
-        // 3. Senhas unificadas (Web + APK compartilham a mesma fonte de verdade; nuvem sempre prevalece, inclusive reset null)
-        const hasCloudPws = Object.prototype.hasOwnProperty.call(mapByKey, 'pwhashes') && mapByKey.pwhashes && typeof mapByKey.pwhashes === 'object';
-        const cloudPws = hasCloudPws ? mapByKey.pwhashes : {};
-        let localPws = {};
-        try {
-          const localPwRaw = localStorage.getItem(PW_STORAGE_KEY);
-          if (localPwRaw) localPws = JSON.parse(localPwRaw) || {};
-        } catch (_e) {}
-        const mergedPws = Object.assign({}, localPws, cloudPws);
-        try { localStorage.setItem(PW_STORAGE_KEY, JSON.stringify(mergedPws)); } catch (_e) {}
-        clubMembers.forEach(m => {
-          m.pwHash = mergedPws[m.id] || null;
-        });
-        const localHasUnsyncedPw = Object.keys(localPws).some(k => localPws[k] && !Object.prototype.hasOwnProperty.call(cloudPws, k));
-        if (localHasUnsyncedPw) {
-          pushCloudStateKey('pwhashes', mergedPws);
-        }
-
-        // 4. Reuniões, Agenda, Tarefas e Sugestões
+        // 3. Reuniões, Agenda, Tarefas e Sugestões
         if (Object.prototype.hasOwnProperty.call(mapByKey, 'meetings') && Array.isArray(mapByKey.meetings) && mapByKey.meetings.length > 0) {
           meetings = mapByKey.meetings;
           if (!meetings.some(m => m.id === selectedMeetingId)) selectedMeetingId = meetings[0].id;
@@ -1470,25 +1463,12 @@
         updateCloudSyncBadge('online');
 
         // Atualiza a interface apenas quando houve alteração real e sem interromper digitação/formulários abertos
-        if (changed || pendingCloudUiRefresh) {
-          if (currentAuthScreen === 'login') {
-            renderLoginMemberList();
-            const pwdInput = document.getElementById('input-login-password');
-            const firstInput = document.getElementById('input-first-password');
-            const typing = (pwdInput && pwdInput.value.length > 0) || (firstInput && firstInput.value.length > 0);
-            if (!typing) {
-              selectLoginMember(selectedLoginMemberId || 'm-05', false);
-              pendingCloudUiRefresh = false;
-            } else {
-              pendingCloudUiRefresh = true;
-            }
-          } else if (currentAuthScreen === 'app') {
-            if (!isUserActivelyEditing()) {
-              renderAll();
-              pendingCloudUiRefresh = false;
-            } else {
-              pendingCloudUiRefresh = true;
-            }
+        if ((changed || pendingCloudUiRefresh) && currentAuthScreen === 'app') {
+          if (!isUserActivelyEditing()) {
+            renderAll();
+            pendingCloudUiRefresh = false;
+          } else {
+            pendingCloudUiRefresh = true;
           }
         }
         return true;
@@ -1525,7 +1505,7 @@
       } catch (_e) {}
     }
 
-    function loadSavedPasswords() {
+    function loadSavedMemberData() {
       try {
         const rawCustom = localStorage.getItem(CUSTOM_MEMBERS_STORAGE_KEY);
         if (rawCustom) {
@@ -1537,17 +1517,6 @@
               }
             });
           }
-        }
-      } catch (_e) {}
-      try {
-        const raw = localStorage.getItem(PW_STORAGE_KEY);
-        if (raw) {
-          const map = JSON.parse(raw);
-          clubMembers.forEach(m => {
-            if (Object.prototype.hasOwnProperty.call(map, m.id)) {
-              m.pwHash = map[m.id] || null;
-            }
-          });
         }
       } catch (_e) {}
       try {
@@ -1584,33 +1553,29 @@
         const recMap = rawRec ? JSON.parse(rawRec) : {};
         recMap[member.id] = recPayload;
         localStorage.setItem(MEMBER_RECORDS_STORAGE_KEY, JSON.stringify(recMap));
-        await mergeAndPushCloudMap('member_records', MEMBER_RECORDS_STORAGE_KEY, { [member.id]: recPayload });
-        persistCustomMembers();
-      } catch (_e) {}
-    }
-
-    async function persistMemberPassword(memberId, hash) {
-      try {
-        const val = hash || null;
-        const raw = localStorage.getItem(PW_STORAGE_KEY);
-        const map = raw ? JSON.parse(raw) : {};
-        map[memberId] = val;
-        localStorage.setItem(PW_STORAGE_KEY, JSON.stringify(map));
-        const res = await mergeAndPushCloudMap('pwhashes', PW_STORAGE_KEY, { [memberId]: val });
-        if (res && res.merged) {
-          clubMembers.forEach(m => {
-            if (Object.prototype.hasOwnProperty.call(res.merged, m.id)) {
-              m.pwHash = res.merged[m.id] || null;
-            }
+        if (!canFullEdit(member) && member.id === activeMemberId) {
+          const ownPatch = {
+            name: recPayload.name,
+            phone: recPayload.phone,
+            email: recPayload.email,
+            emergency: recPayload.emergency,
+            bike: recPayload.bike
+          };
+          await supabaseRequest('/rest/v1/rpc/cmc_update_my_member_record', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ p_patch: ownPatch })
           });
+        } else {
+          await mergeAndPushCloudMap('member_records', MEMBER_RECORDS_STORAGE_KEY, { [member.id]: recPayload });
         }
+        if (canFullEdit(member)) persistCustomMembers();
       } catch (_e) {}
     }
 
     function showAuthScreen(screen, skipScroll) {
       currentAuthScreen = screen;
       document.getElementById('screen-login').classList.toggle('hidden', screen !== 'login');
-      document.getElementById('screen-register').classList.toggle('hidden', screen !== 'register');
       document.getElementById('screen-app').classList.toggle('hidden', screen !== 'app');
       const btn = document.getElementById('btn-toggle-auth');
       if (screen === 'app') {
@@ -1619,22 +1584,18 @@
         btn.textContent = hasLoggedInOnce ? 'Voltar à Ferramenta' : 'Escolher Integrante (Login)';
       }
       if (screen === 'login') {
-        renderLoginMemberList();
-        selectLoginMember(selectedLoginMemberId || activeMemberId || 'm-05');
+        document.getElementById('login-feedback').classList.add('hidden');
       }
-      if (screen === 'register') resetRegisterForm();
       persistActiveSession();
       if (!skipScroll) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
-    function toggleAuthScreen() {
+    async function toggleAuthScreen() {
       if (currentAuthScreen === 'app') {
-        hasLoggedInOnce = false;
-        clearActiveSession();
-        showAuthScreen('login');
-      } else if (hasLoggedInOnce) {
+        logout();
+      } else if (hasLoggedInOnce && await ensureSupabaseSession()) {
         showAuthScreen('app');
       } else {
         showAuthScreen('login');
@@ -1662,16 +1623,6 @@
       return rules.every(r => r.ok);
     }
 
-    async function demoHash(pw) {
-      if (window.crypto && crypto.subtle && window.TextEncoder) {
-        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cmc-demo-salt:' + pw));
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-      }
-      let h = 7;
-      for (const c of pw) h = (h * 31 + c.charCodeAt(0)) | 0;
-      return 'fallback-' + h;
-    }
-
     function setLoginFeedback(kind, msg) {
       const fb = document.getElementById('login-feedback');
       const styles = {
@@ -1683,342 +1634,36 @@
       fb.textContent = msg;
     }
 
-    function renderLoginMemberList() {
-      const listEl = document.getElementById('login-member-list');
-      if (!listEl) return;
-      const q = (document.getElementById('login-member-search')?.value || '').toLowerCase().trim();
-      listEl.innerHTML = '';
-
-      const filtered = clubMembers.filter(m => {
-        if (!q) return true;
-        return m.roadName.toLowerCase().includes(q) || m.rankLabel.toLowerCase().includes(q) || m.name.toLowerCase().includes(q);
-      });
-
-      const counter = document.getElementById('login-members-counter');
-      if (counter) counter.textContent = `${filtered.length} de ${clubMembers.length} integrantes`;
-
-      listEl.className = isMobileView()
-        ? 'grid grid-cols-1 gap-2 max-h-[380px] overflow-y-auto pr-1'
-        : 'grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[440px] overflow-y-auto pr-1';
-
-      filtered.forEach(m => {
-        const isSelected = m.id === selectedLoginMemberId;
-        const isFirstAccess = !m.pwHash;
-        const btn = el('button', 'w-full text-left p-3 rounded border flex items-start justify-between gap-2.5 transition ' + (
-          isSelected
-            ? 'bg-[#26060b] border-2 border-[#8c1927] shadow-md'
-            : 'bg-[#040406] border-[#1a1b20] hover:border-[#6b0f1a]'
-        ));
-        btn.type = 'button';
-        btn.onclick = () => selectLoginMember(m.id, true);
-
-        const left = el('div', 'flex items-start gap-2.5 flex-1');
-        const img = el('img', 'w-10 h-10 object-contain rounded bg-[#020203] border border-[#1a1b20] p-0.5 flex-shrink-0 mt-0.5');
-        img.src = m.role === 'PROSPECT' ? CREST_SHIELD_URI : CREST_ROCKER_URI;
-        img.alt = m.roadName;
-
-        const txt = el('div', 'space-y-1 flex-1');
-        const nameLine = el('div', 'flex flex-wrap items-center gap-1.5');
-        nameLine.appendChild(el('span', 'text-sm font-black uppercase tracking-wider text-[#e6e6e1] break-words leading-snug', m.roadName));
-        if (canFullEdit(m)) {
-          nameLine.appendChild(el('span', 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#6b0f1a] text-[#e6e6e1] font-bold', '★ FULL EDIÇÃO'));
-        }
-        txt.appendChild(nameLine);
-        txt.appendChild(el('div', 'text-[11px] font-mono text-[#c9c9c4] break-words leading-snug', m.rankLabel));
-        left.append(img, txt);
-
-        const statusPill = el('span', isFirstAccess
-          ? 'text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#1c1406] border border-[#f59e0b]/70 text-[#f59e0b] flex-shrink-0 mt-0.5'
-          : 'text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#071f16] border border-[#10b981]/60 text-[#10b981] flex-shrink-0 mt-0.5',
-          isFirstAccess ? '1º ACESSO' : 'SENHA OK'
-        );
-
-        btn.append(left, statusPill);
-        listEl.appendChild(btn);
-      });
-    }
-
-    function selectLoginMember(memberId, clickedByUser) {
-      const m = clubMembers.find(x => x.id === memberId) || clubMembers[0];
-      selectedLoginMemberId = m.id;
-      renderLoginMemberList();
-
-      document.getElementById('login-selected-crest').src = m.role === 'PROSPECT' ? CREST_SHIELD_URI : CREST_ROCKER_URI;
-      document.getElementById('login-selected-name').textContent = m.roadName;
-      document.getElementById('login-selected-rank').textContent = canFullEdit(m) ? `${m.rankLabel} • ★ FULL EDIÇÃO` : m.rankLabel;
-      document.getElementById('login-feedback').classList.add('hidden');
-
-      const banner = document.getElementById('login-mode-banner');
-      const firstForm = document.getElementById('login-first-access-form');
-      const existingForm = document.getElementById('login-existing-form');
-
-      if (!m.pwHash) {
-        banner.className = 'text-xs rounded p-3 border border-[#f59e0b]/70 bg-[#1c1406] text-[#e6e6e1] font-mono';
-        banner.textContent = `1º Acesso de ${m.roadName}: Como você ainda não definiu sua senha pessoal, escolha e confirme sua senha abaixo para entrar.`;
-        firstForm.classList.remove('hidden');
-        existingForm.classList.add('hidden');
-        document.getElementById('input-first-password').value = '';
-        document.getElementById('input-first-password-confirm').value = '';
-        validateFirstAccessLive();
-      } else {
-        banner.className = 'text-xs rounded p-3 border border-[#10b981]/60 bg-[#071f16] text-[#e6e6e1] font-mono';
-        banner.textContent = `Integrante ${m.roadName} selecionado: Digite sua senha cadastrada para entrar na ferramenta.`;
-        firstForm.classList.add('hidden');
-        existingForm.classList.remove('hidden');
-        document.getElementById('input-login-password').value = '';
+    async function handlePasswordResetRequest() {
+      const email = document.getElementById('input-login-email').value;
+      try {
+        await requestPasswordReset(email);
+        setLoginFeedback('ok', 'Se o e-mail estiver cadastrado, você receberá as instruções para redefinir a senha.');
+      } catch (error) {
+        setLoginFeedback('err', error.message);
       }
-      if (clickedByUser && isMobileView()) {
-        const formBox = document.getElementById('login-col-form');
-        if (formBox && formBox.scrollIntoView) {
-          formBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }
-    }
-
-    function validateFirstAccessLive() {
-      const p1 = document.getElementById('input-first-password')?.value || '';
-      const p2 = document.getElementById('input-first-password-confirm')?.value || '';
-      const ind = document.getElementById('first-pw-match-indicator');
-      if (!ind) return false;
-      if (p1.length < 4) {
-        ind.style.color = '#8a8c94';
-        ind.textContent = '○ Digite uma senha com pelo menos 4 caracteres';
-        return false;
-      }
-      if (p1 !== p2) {
-        ind.style.color = '#f59e0b';
-        ind.textContent = '○ As duas senhas precisam ser iguais';
-        return false;
-      }
-      ind.style.color = '#10b981';
-      ind.textContent = '✓ Senhas conferem — pronto para salvar e entrar!';
-      return true;
-    }
-
-    async function handleFirstAccessSubmit(e) {
-      e.preventDefault();
-      let m = clubMembers.find(x => x.id === selectedLoginMemberId);
-      if (!m) return;
-      const p1 = document.getElementById('input-first-password').value;
-      const p2 = document.getElementById('input-first-password-confirm').value;
-      if (p1.length < 4) {
-        setLoginFeedback('err', 'A senha deve ter pelo menos 4 caracteres.');
-        return;
-      }
-      if (p1 !== p2) {
-        setLoginFeedback('err', 'A confirmação de senha não confere.');
-        return;
-      }
-
-      // Garante sincronia com o backend unificado antes de gravar senha de 1º acesso
-      await syncAllFromCloud(true);
-      m = clubMembers.find(x => x.id === selectedLoginMemberId);
-      if (!m) return;
-
-      if (m.pwHash) {
-        const enteredHash = await demoHash(p1);
-        if (enteredHash !== m.pwHash) {
-          selectLoginMember(m.id, false);
-          setLoginFeedback('warn', `Você já possui senha cadastrada no sistema (${m.roadName}). Digite sua senha para entrar.`);
-          return;
-        }
-      }
-
-      if (m.status === 'PENDENTE') {
-        setLoginFeedback('warn', '403 Forbidden: Cadastro ainda AGUARDANDO APROVAÇÃO de BOB.');
-        return;
-      }
-      if (m.status === 'SUSPENSO') {
-        setLoginFeedback('err', '403 Forbidden: Acesso suspenso.');
-        return;
-      }
-
-      const hash = await demoHash(p1);
-      m.pwHash = hash;
-      setLoginFeedback('ok', `Salvando senha no servidor unificado para ${m.roadName}...`);
-      await persistMemberPassword(m.id, hash);
-      hasLoggedInOnce = true;
-      activeMemberId = m.id;
-      currentAuthScreen = 'app';
-      persistActiveSession();
-      setLoginFeedback('ok', `Senha cadastrada e unificada (Web + APK)! Entrando como ${m.roadName}...`);
-      setTimeout(() => {
-        document.getElementById('login-feedback').classList.add('hidden');
-        selectActiveMember(m.id);
-        showAuthScreen('app');
-      }, 250);
-    }
-
-    async function resetSelectedMemberFirstAccess() {
-      const m = clubMembers.find(x => x.id === selectedLoginMemberId);
-      if (!m) return;
-      m.pwHash = null;
-      await persistMemberPassword(m.id, null);
-      selectLoginMember(m.id);
     }
 
     async function handleInteractiveLogin(e) {
       e.preventDefault();
-      if (remainingLoginAttempts <= 0) {
-        setLoginFeedback('err', '429 Too Many Requests: Aguarde 15 minutos para tentar novamente.');
-        return;
+      const email = document.getElementById('input-login-email').value.trim().toLowerCase();
+      const password = document.getElementById('input-login-password').value;
+      const submit = e.currentTarget.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      setLoginFeedback('warn', 'Validando acesso...');
+      try {
+        const member = await signInWithPassword(email, password);
+        document.getElementById('input-login-password').value = '';
+        await enterAuthenticatedApp(member);
+      } catch (error) {
+        clearAuthSession();
+        setLoginFeedback('err', error.message || 'Não foi possível entrar. Verifique o e-mail e a senha.');
+      } finally {
+        if (submit) submit.disabled = false;
       }
-      if (initialCloudSyncPromise) {
-        try { await initialCloudSyncPromise; } catch (_e) {}
-      }
-      let m = clubMembers.find(x => x.id === selectedLoginMemberId);
-      if (!m) return;
-      const pw = document.getElementById('input-login-password').value;
-      const attemptedHash = await demoHash(pw);
-      let passwordOk = m.pwHash ? attemptedHash === m.pwHash : pw === DEMO_DEFAULT_PASSWORD;
-
-      if (!passwordOk) {
-        await syncAllFromCloud(true);
-        m = clubMembers.find(x => x.id === selectedLoginMemberId);
-        if (!m) return;
-        if (!m.pwHash) {
-          selectLoginMember(m.id, false);
-          setLoginFeedback('warn', `A senha de ${m.roadName} está aberta para 1º Acesso. Cadastre sua senha abaixo.`);
-          return;
-        }
-        passwordOk = attemptedHash === m.pwHash;
-      }
-
-      if (!passwordOk) {
-        if (remainingLoginAttempts > 1) {
-          remainingLoginAttempts--;
-          document.getElementById('login-attempts-left').textContent = String(remainingLoginAttempts);
-          setLoginFeedback('warn', `Senha incorreta para ${m.roadName}. Restam ${remainingLoginAttempts} tentativas.`);
-        } else {
-          remainingLoginAttempts = 0;
-          document.getElementById('login-attempts-left').textContent = '0 (TRANCADO)';
-          setLoginFeedback('err', '429 Too Many Requests: Conta bloqueada temporariamente por 15 minutos.');
-        }
-        return;
-      }
-
-      if (m.status === 'PENDENTE') {
-        setLoginFeedback('warn', '403 Forbidden: Cadastro ainda AGUARDANDO APROVAÇÃO de BOB.');
-        return;
-      }
-      if (m.status === 'SUSPENSO') {
-        setLoginFeedback('err', '403 Forbidden: Acesso suspenso.');
-        return;
-      }
-
-      remainingLoginAttempts = 5;
-      document.getElementById('login-attempts-left').textContent = '5';
-      hasLoggedInOnce = true;
-      activeMemberId = m.id;
-      currentAuthScreen = 'app';
-      persistActiveSession();
-      setLoginFeedback('ok', `200 OK — Bem-vindo, ${m.roadName}!`);
-      setTimeout(() => {
-        document.getElementById('login-feedback').classList.add('hidden');
-        selectActiveMember(m.id);
-        showAuthScreen('app');
-      }, 250);
     }
 
-    function resetRegisterForm() {
-      document.getElementById('register-form').reset();
-      document.getElementById('register-feedback').classList.add('hidden');
-      document.getElementById('register-form-wrap').classList.remove('hidden');
-      document.getElementById('register-success').classList.add('hidden');
-      paintRules('reg-pw', '');
-      updateRegisterMatch();
-    }
-
-    function onRegisterPasswordInput() {
-      paintRules('reg-pw', document.getElementById('reg-pass').value);
-      updateRegisterMatch();
-    }
-
-    function updateRegisterMatch() {
-      const a = document.getElementById('reg-pass').value;
-      const b = document.getElementById('reg-pass2').value;
-      const node = document.getElementById('reg-pw-match');
-      const ok = a.length > 0 && a === b;
-      node.style.color = ok ? '#10b981' : '#8a8c94';
-      node.firstElementChild.textContent = ok ? '✓' : '○';
-    }
-
-    // POST /api/auth/register → cria usuário PROSPECT com is_active = FALSE (pendente)
-    async function submitRegistration(e) {
-      e.preventDefault();
-      const fb = document.getElementById('register-feedback');
-      const showErr = msg => {
-        fb.className = 'text-xs p-3 rounded border border-[#6b0f1a] bg-[#170306] text-[#e6e6e1] font-mono';
-        fb.textContent = msg;
-        fb.classList.remove('hidden');
-      };
-      const v = id => document.getElementById(id).value.trim();
-      if (v('reg-website')) return; // honeypot preenchido = bot
-
-      const name = v('reg-name');
-      const road = v('reg-road');
-      const email = v('reg-email').toLowerCase();
-      const phone = v('reg-phone');
-      const bike = v('reg-bike');
-      const emergName = v('reg-emerg-name');
-      const emergPhone = v('reg-emerg-phone');
-      const referral = v('reg-referral');
-      const pw = document.getElementById('reg-pass').value;
-      const pw2 = document.getElementById('reg-pass2').value;
-
-      if (name.split(/\s+/).filter(Boolean).length < 2) return showErr('Informe nome e sobrenome.');
-      if (!/^[\p{L}\s'-]{2,30}$/u.test(road)) return showErr('A alcunha deve ter de 2 a 30 letras (sem números ou símbolos).');
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return showErr('E-mail inválido.');
-      const digits = phone.replace(/\D/g, '');
-      if (digits.length < 10 || digits.length > 13) return showErr('WhatsApp inválido. Informe DDD + número.');
-      if (!emergName || emergPhone.replace(/\D/g, '').length < 10) return showErr('Contato de emergência obrigatório (nome + telefone com DDD).');
-      if (!paintRules('reg-pw', pw)) return showErr('Senha fora da política: mín. 8 caracteres com maiúscula, minúscula, número e símbolo.');
-      if (pw !== pw2) return showErr('As senhas não conferem.');
-      if (!document.getElementById('reg-terms').checked) return showErr('É necessário aceitar o estatuto e o termo de uso de dados (LGPD).');
-
-      const protocol = 'CMC-' + Math.random().toString(16).slice(2, 8).toUpperCase();
-      const exists = clubMembers.some(m => m.email.toLowerCase() === email);
-      if (!exists) {
-        const newMember = {
-          id: 'm-' + Date.now(),
-          roadName: road,
-          name,
-          role: 'PROSPECT',
-          rankLabel: 'Solicitação • Aguardando Diretoria',
-          phone,
-          email,
-          emergency: `${emergName} - ${emergPhone}`,
-          bike,
-          joinedAt: null,
-          status: 'PENDENTE',
-          origin: 'AUTO_CADASTRO',
-          referral,
-          requestedAt: new Date().toLocaleDateString('pt-BR'),
-          protocol,
-          pwHash: await demoHash(pw)
-        };
-        clubMembers.push(newMember);
-        persistMemberPassword(newMember.id, newMember.pwHash);
-        persistCustomMembers();
-      }
-      // Resposta idêntica mesmo se o e-mail já existir (evita enumeração de contas)
-      lastRegisteredEmail = email;
-      fb.classList.add('hidden');
-      document.getElementById('register-form-wrap').classList.add('hidden');
-      document.getElementById('register-success').classList.remove('hidden');
-      document.getElementById('register-protocol').textContent = protocol;
-      renderMembersList();
-    }
-
-    function goToLoginAfterRegister() {
-      if (lastRegisteredEmail) {
-        const found = clubMembers.find(m => m.email.toLowerCase() === lastRegisteredEmail.toLowerCase());
-        if (found) selectedLoginMemberId = found.id;
-      }
-      showAuthScreen('login');
-    }
-
-    // Seleciona um integrante da Lista Única para simular sua visão e permissões RBAC
+    // Seleciona o integrante autenticado para exibir sua visão e permissões
     function selectActiveMember(memberId) {
       activeMemberId = memberId;
       const m = getActiveMember();
@@ -2553,7 +2198,6 @@
           document.getElementById('user-rbac-summary').textContent = getRoleSummary();
           renderAccountPanel();
           renderMembersList();
-          renderLoginMemberList();
           openMemberSheet(item.id, false, `✓ Ficha de ${item.roadName} (${item.rankLabel}) atualizada por BOB!`);
         };
 
@@ -2577,11 +2221,13 @@
         } else if (!self && item.status === 'SUSPENSO') {
           mk('Reativar acesso', true, () => setMemberStatus(item.id, 'ATIVO'));
         }
-        mk('🔑 Resetar p/ 1º Acesso (Senha)', false, async () => {
-          item.pwHash = null;
-          await persistMemberPassword(item.id, null);
-          renderLoginMemberList();
-          openMemberSheet(item.id, false, `✓ Senha de ${item.roadName} resetada no servidor (Web + APK)! No próximo login será solicitado criar nova senha.`);
+        mk('Enviar redefinição de senha por e-mail', false, async () => {
+          try {
+            await requestPasswordReset(item.email);
+            openMemberSheet(item.id, false, `Instruções de redefinição enviadas para o e-mail de ${item.roadName}.`);
+          } catch (error) {
+            openMemberSheet(item.id, false, error.message);
+          }
         });
         quickWrap.appendChild(btns);
         editBox.appendChild(quickWrap);
@@ -2606,12 +2252,6 @@
         }
       }
 
-      if (item.status === 'ATIVO' && item.id !== activeMemberId) {
-        const sw = el('button', 'w-full px-3 py-2 rounded-sm text-[11px] font-bold uppercase bg-[#0d0e12] border border-dashed border-[#2a2b31] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a]', `Simular login como ${item.roadName} (teste RBAC)`);
-        sw.onclick = () => { closeMemberSheet(); selectActiveMember(item.id); };
-        content.appendChild(sw);
-      }
-
       document.getElementById('member-sheet').classList.remove('hidden');
     }
 
@@ -2624,7 +2264,6 @@
       const m = clubMembers.find(x => x.id === memberId);
       if (m) persistMemberRecord(m);
       renderMembersList();
-      renderLoginMemberList();
       if (memberId && openSheetMemberId === memberId && clubMembers.some(x => x.id === memberId)) {
         openMemberSheet(memberId);
       } else {
@@ -2664,12 +2303,27 @@
     }
 
     // PATCH /api/club/members/:id/status (Exclusivo BOB)
-    function setMemberStatus(id, status) {
+    async function setMemberStatus(id, status) {
       if (!canFullEdit()) return;
       const m = clubMembers.find(x => x.id === id);
       if (!m) return;
-      m.status = status;
-      afterMemberChange(id);
+      try {
+        const lookup = await supabaseRequest(`/rest/v1/profiles?legacy_member_id=eq.${encodeURIComponent(id)}&select=id`);
+        if (!lookup.ok) throw new Error('Não foi possível verificar o acesso do integrante.');
+        const rows = await lookup.json();
+        if (Array.isArray(rows) && rows.length === 1) {
+          const update = await supabaseRequest(`/rest/v1/profiles?id=eq.${encodeURIComponent(rows[0].id)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: status === 'ATIVO' })
+          });
+          if (!update.ok) throw new Error('Não foi possível atualizar o acesso do integrante.');
+        }
+        m.status = status;
+        afterMemberChange(id);
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
     function createMember(e) {
@@ -2696,15 +2350,13 @@
         status: 'ATIVO',
         origin: 'DIRETORIA',
         referral: getActiveMember().roadName,
-        requestedAt: null,
-        pwHash: null
+        requestedAt: null
       };
       clubMembers.push(newMember);
       persistCustomMembers();
       e.target.reset();
       toggleElement('modal-new-member');
       renderMembersList();
-      renderLoginMemberList();
     }
 
     // ===================== MÓDULO REUNIÃO (INÍCIO/FIM, CHECKLIST, ATA ANTERIOR & PAUTA ATUAL) =====================
@@ -3980,17 +3632,14 @@
       document.getElementById('acc-road-title').textContent = m.roadName;
       document.getElementById('acc-login-email').textContent = m.email;
       renderMembersList();
-      renderLoginMemberList();
 
       const badge = document.getElementById('profile-saved-badge');
       badge.classList.remove('hidden');
       setTimeout(() => badge.classList.add('hidden'), 2500);
     }
 
-    // PATCH /api/auth/password → valida senha atual (Argon2id.verify), grava novo hash e revoga refresh tokens
     async function changePassword(e) {
       e.preventDefault();
-      let m = getActiveMember();
       const fb = document.getElementById('acc-pw-feedback');
       const show = (ok, msg) => {
         fb.className = 'text-xs p-2.5 rounded border font-mono text-[#e6e6e1] ' + (ok ? 'border-[#10b981] bg-[#071f16]' : 'border-[#6b0f1a] bg-[#170306]');
@@ -4000,24 +3649,27 @@
       const cur = document.getElementById('acc-pw-current').value;
       const nw = document.getElementById('acc-pw-new').value;
       const nw2 = document.getElementById('acc-pw-new2').value;
-      const curHash = await demoHash(cur);
-      let currentOk = m.pwHash ? curHash === m.pwHash : cur === DEMO_DEFAULT_PASSWORD;
-      if (!currentOk) {
-        await syncAllFromCloud(true);
-        m = getActiveMember();
-        currentOk = m.pwHash ? curHash === m.pwHash : cur === DEMO_DEFAULT_PASSWORD;
-      }
-      if (!currentOk) return show(false, '401: Senha atual incorreta.');
       if (!paintRules('acc-pw', nw)) return show(false, 'Nova senha fora da política de segurança.');
       if (nw !== nw2) return show(false, 'A confirmação não confere.');
       if (nw === cur) return show(false, 'A nova senha deve ser diferente da atual.');
-      m.pwHash = await demoHash(nw);
-      await persistMemberPassword(m.id, m.pwHash);
-      accountExtraSessions = [];
-      renderSessions();
-      ['acc-pw-current', 'acc-pw-new', 'acc-pw-new2'].forEach(id => { document.getElementById(id).value = ''; });
-      paintRules('acc-pw', '');
-      show(true, '200 OK: Senha atualizada automaticamente no Web e no APK Android.');
+      try {
+        if (!supabaseSession || !supabaseSession.user || !supabaseSession.user.email) throw new Error('Sessão inválida. Entre novamente.');
+        await signInWithPassword(supabaseSession.user.email, cur);
+        const cfg = getSupabaseConfig();
+        const res = await fetch(`${cfg.url}/auth/v1/user`, {
+          method: 'PUT',
+          headers: buildSupabaseHeaders(cfg, { 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ password: nw })
+        });
+        if (!res.ok) throw new Error('Não foi possível atualizar a senha.');
+        accountExtraSessions = [];
+        renderSessions();
+        ['acc-pw-current', 'acc-pw-new', 'acc-pw-new2'].forEach(id => { document.getElementById(id).value = ''; });
+        paintRules('acc-pw', '');
+        show(true, 'Senha atualizada no Supabase Auth.');
+      } catch (error) {
+        show(false, error.message || 'Não foi possível atualizar a senha.');
+      }
     }
 
     function loadSavedSuggestions() {
@@ -4029,11 +3681,46 @@
       } catch (_e) {}
     }
 
-    function persistSuggestions() {
+    async function submitSuggestion(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      const subjEl = document.getElementById('sug-subject');
+      const contEl = document.getElementById('sug-content');
+      const subj = (subjEl?.value || '').trim();
+      const cont = (contEl?.value || '').trim();
+      if (!subj || !cont) return false;
+
+      const submit = e && e.currentTarget ? e.currentTarget.querySelector('button[type="submit"]') : null;
+      if (submit) submit.disabled = true;
       try {
-        localStorage.setItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify(suggestions));
-        pushCloudStateKey('suggestions', suggestions);
-      } catch (_e) {}
+        const res = await supabaseRequest('/rest/v1/rpc/cmc_add_suggestion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            p_subject: subj,
+            p_content: cont,
+            p_attachment: pendingAttachmentMeta,
+            p_attachment_data_url: pendingAttachmentDataUrl || null
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || 'Não foi possível enviar a sugestão.');
+
+        suggestions = [data].concat(suggestions.filter(s => s.id !== data.id));
+        try { localStorage.setItem(SUGGESTIONS_STORAGE_KEY, JSON.stringify(suggestions)); } catch (_e) {}
+        pendingAttachmentMeta = null;
+        pendingAttachmentDataUrl = null;
+        document.getElementById('sug-file-info').textContent = 'Sem anexo';
+        if (subjEl) subjEl.value = '';
+        if (contEl) contEl.value = '';
+        const fileInp = document.getElementById('sug-file');
+        if (fileInp) fileInp.value = '';
+        renderSuggestions();
+      } catch (error) {
+        alert(error.message || 'Não foi possível enviar a sugestão.');
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+      return false;
     }
 
     function validateAttachmentInput(input) {
@@ -4109,36 +3796,6 @@
       });
     }
 
-    function submitSuggestion(e) {
-      if (e && typeof e.preventDefault === 'function') e.preventDefault();
-      const subjEl = document.getElementById('sug-subject');
-      const contEl = document.getElementById('sug-content');
-      const subj = (subjEl?.value || '').trim();
-      const cont = (contEl?.value || '').trim();
-      if (!subj || !cont) return false;
-
-      const m = getActiveMember();
-      suggestions.unshift({
-        id: 'sug-' + Date.now(),
-        author: `${m.roadName} (${m.rankLabel})`,
-        subject: subj,
-        content: cont,
-        attachment: pendingAttachmentMeta,
-        attachmentDataUrl: pendingAttachmentDataUrl || null,
-        status: 'RECEBIDA'
-      });
-      persistSuggestions();
-      pendingAttachmentMeta = null;
-      pendingAttachmentDataUrl = null;
-      document.getElementById('sug-file-info').textContent = 'Sem anexo';
-      if (subjEl) subjEl.value = '';
-      if (contEl) contEl.value = '';
-      const fileInp = document.getElementById('sug-file');
-      if (fileInp) fileInp.value = '';
-      renderSuggestions();
-      return false;
-    }
-
     function renderAll() {
       renderMembersList();
       renderMeetings();
@@ -4147,13 +3804,31 @@
       renderSuggestions();
     }
 
+    function startUnifiedCloudSync() {
+      if (cloudSyncStarted) return;
+      cloudSyncStarted = true;
+      window.addEventListener('focus', () => {
+        if (currentAuthScreen === 'app') syncAllFromCloud(false);
+      });
+      window.addEventListener('online', () => {
+        if (currentAuthScreen === 'app') syncAllFromCloud(true);
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && currentAuthScreen === 'app') syncAllFromCloud(false);
+      });
+      setInterval(() => {
+        if (!document.hidden && currentAuthScreen === 'app') syncAllFromCloud(false);
+      }, 10000);
+    }
+
     window.addEventListener('resize', () => {
       if (currentViewportMode === 'auto') {
         setViewport('auto');
       }
     });
 
-    loadSavedPasswords();
+    try { localStorage.removeItem('cmc_member_pwhashes_v1'); } catch (_e) {}
+    loadSavedMemberData();
     loadSavedMeetings();
     loadSavedAgendaEvents();
     loadSavedTasks();
@@ -4161,43 +3836,58 @@
     initCrestImages();
     setViewport('auto');
 
-    // Restaura sessão ativa caso a página tenha sido recarregada (ex: após selecionar anexo no celular)
-    (function restoreSessionOnStartup() {
+    (async function restoreSessionOnStartup() {
+      try {
+        const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+        if (hash.get('access_token') && hash.get('refresh_token')) {
+          const expiresIn = Number(hash.get('expires_in') || 3600);
+          storeAuthSession({
+            access_token: hash.get('access_token'),
+            refresh_token: hash.get('refresh_token'),
+            expires_in: expiresIn,
+            expires_at: Date.now() + expiresIn * 1000,
+            token_type: hash.get('token_type') || 'bearer',
+            user: null
+          });
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      } catch (_e) {}
+
+      let saved = null;
       try {
         const raw = localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY);
-        if (raw) {
-          const saved = JSON.parse(raw);
-          if (saved && saved.hasLoggedInOnce && saved.currentAuthScreen === 'app') {
+        saved = raw ? JSON.parse(raw) : null;
+      } catch (_e) {}
+
+      if (await ensureSupabaseSession()) {
+        try {
+          const profile = await getCurrentAuthProfile();
+          const member = profile && clubMembers.find(m => m.id === profile.legacy_member_id);
+          if (profile && profile.active && member) {
+            currentAuthProfile = profile;
             hasLoggedInOnce = true;
-            if (typeof saved.agendaYear === 'number') agendaYear = saved.agendaYear;
-            if (typeof saved.agendaMonth === 'number') agendaMonth = saved.agendaMonth;
-            const targetMember = clubMembers.some(m => m.id === saved.activeMemberId) ? saved.activeMemberId : 'm-05';
-            currentTab = saved.currentTab || 'integrantes';
-            selectActiveMember(targetMember);
+            activeMemberId = member.id;
+            if (saved && typeof saved.agendaYear === 'number') agendaYear = saved.agendaYear;
+            if (saved && typeof saved.agendaMonth === 'number') agendaMonth = saved.agendaMonth;
+            currentTab = saved && saved.currentTab ? saved.currentTab : 'integrantes';
+            await syncAllFromCloud(true);
+            selectActiveMember(member.id);
             showAuthScreen('app', true);
             openTab(currentTab);
             restoreEventDraftIfOpen();
+            startUnifiedCloudSync();
             return;
           }
-        }
-      } catch (_e) {}
+        } catch (_e) {}
+      }
+
+      clearAuthSession();
+      clearActiveSession();
+      hasLoggedInOnce = false;
       selectActiveMember('m-05');
       showAuthScreen('login', true);
-      document.getElementById('top-active-member').textContent = 'Selecione seu nome para entrar';
-    })();
-
-    // Sincronização 100% automática entre Web e APK Android (backend único Supabase, sem interação do usuário)
-    (function initUnifiedCloudSync() {
-      updateCloudSyncBadge('syncing');
-      initialCloudSyncPromise = syncAllFromCloud(true);
-      window.addEventListener('focus', () => { syncAllFromCloud(false); });
-      window.addEventListener('online', () => { syncAllFromCloud(true); });
-      document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) syncAllFromCloud(false);
-      });
-      setInterval(() => {
-        if (!document.hidden) syncAllFromCloud(false);
-      }, 10000);
+      document.getElementById('top-active-member').textContent = 'Acesso restrito';
+      updateCloudSyncBadge('offline');
     })();
   </script>
 </body>

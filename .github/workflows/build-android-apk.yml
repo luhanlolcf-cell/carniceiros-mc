@@ -57,18 +57,8 @@ jobs:
             echo "CMC_KEY_PASS=${KEY_PASS:-$KEYSTORE_PASS}" >> "$GITHUB_ENV"
             echo "Usando Keystore persistente do repositório."
           else
-            FALLBACK_PASS="CarniceirosMC#2026"
-            keytool -genkeypair -v \
-              -keystore /tmp/cmc-release.keystore \
-              -alias carniceirosmc \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass "$FALLBACK_PASS" -keypass "$FALLBACK_PASS" \
-              -dname "CN=Carniceiros MC, OU=Secretaria, O=Carniceiros MC, L=Curitiba, ST=PR, C=BR"
-            echo "CMC_KEYSTORE_PATH=/tmp/cmc-release.keystore" >> "$GITHUB_ENV"
-            echo "CMC_KEYSTORE_PASS=$FALLBACK_PASS" >> "$GITHUB_ENV"
-            echo "CMC_KEY_ALIAS=carniceirosmc" >> "$GITHUB_ENV"
-            echo "CMC_KEY_PASS=$FALLBACK_PASS" >> "$GITHUB_ENV"
-            echo "Usando Keystore temporária para assinatura Release."
+            echo "Erro: configure CMC_KEYSTORE_B64, CMC_KEYSTORE_PASS e CMC_KEY_ALIAS nos secrets do repositório." >&2
+            exit 1
           fi
 
       - name: Compilar APK Release (Gradle)
@@ -111,7 +101,7 @@ jobs:
             '### Como instalar no Android:' \
             '1. Baixe o arquivo **Carniceiros-MC.apk** abaixo.' \
             '2. Toque no arquivo baixado e permita a instalação por esta fonte.' \
-            '3. Ao abrir, clique no seu nome na lista de integrantes (1º acesso cria sua senha).' \
+            '3. Entre com o e-mail do clube e a senha que você recebeu; se precisar, use **Esqueci minha senha**.' \
             '' \
             '- Versão: `1.0.${{ github.run_number }}`' \
             '- Modo offline + anexos habilitados' > /tmp/release_notes.md
