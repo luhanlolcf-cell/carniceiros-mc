@@ -315,6 +315,29 @@
               Esqueci minha senha
             </button>
           </form>
+
+          <form id="recovery-form" onsubmit="handleRecoverySubmit(event)" class="hidden space-y-3" autocomplete="off">
+            <div class="flex items-center justify-between gap-2 border-b border-[#1a1b20] pb-2">
+              <div id="recovery-email" class="text-[10px] font-mono uppercase tracking-widest text-[#10b981] break-all"></div>
+              <button type="button" onclick="cancelRecovery()" class="text-[11px] font-mono text-[#8a8c94] underline hover:text-[#e6e6e1] flex-shrink-0">Cancelar</button>
+            </div>
+            <div>
+              <label class="mc-label" for="rec-pw-new">Nova senha *</label>
+              <input id="rec-pw-new" type="password" maxlength="128" oninput="paintRules('rec-pw', this.value)" class="mc-input font-mono" />
+            </div>
+            <div>
+              <label class="mc-label" for="rec-pw-new2">Repita a nova senha *</label>
+              <input id="rec-pw-new2" type="password" maxlength="128" class="mc-input font-mono" />
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono text-[#8a8c94]">
+              <div id="rec-pw-len" class="flex items-center gap-1.5"><span>○</span> Mín. 8</div>
+              <div id="rec-pw-upper" class="flex items-center gap-1.5"><span>○</span> Maiúscula</div>
+              <div id="rec-pw-lower" class="flex items-center gap-1.5"><span>○</span> Minúscula</div>
+              <div id="rec-pw-num" class="flex items-center gap-1.5"><span>○</span> Número</div>
+              <div id="rec-pw-spec" class="flex items-center gap-1.5 col-span-2"><span>○</span> Símbolo especial</div>
+            </div>
+            <button type="submit" class="w-full py-2.5 px-4 rounded-sm mc-btn-burgundy text-xs">Salvar nova senha e entrar</button>
+          </form>
         </div>
       </div>
     </section>
@@ -1124,6 +1147,9 @@
     const MEMBER_RECORDS_STORAGE_KEY = 'cmc_member_records_v1';
     const CUSTOM_MEMBERS_STORAGE_KEY = 'cmc_custom_members_v1';
     const ACTIVE_SESSION_STORAGE_KEY = 'cmc_active_session_v1';
+    const RECOVERY_VERIFIER_STORAGE_KEY = 'cmc_pwd_recovery_verifier_v1';
+    const RECOVERY_CREDENTIAL_STORAGE_KEY = 'cmc_pwd_recovery_credential_v1';
+    let recoverySession = null;
     // Backend unificado (Web + APK Android) — conexão 100% automática sem interação do usuário
     const UNIFIED_BACKEND_URL = 'https://uehaphdmtbmonlojoaic.supabase.co';
     const UNIFIED_BACKEND_KEY = 'sb_publishable_SxGmPCA_1qAcPml5yxvchA_mkwjfdFY';
@@ -1259,6 +1285,154 @@
       return member;
     }
 
+    function toBase64Url(buffer) {
+      return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    async function createPkcePair() {
+      if (!window.crypto || !window.crypto.subtle) return null;
+      const random = new Uint8Array(64);
+      window.crypto.getRandomValues(random);
+      const verifier = toBase64Url(random);
+      const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+      return { verifier, challenge: toBase64Url(digest) };
+    }
+
+    function recoveryCredentialMessage(code, description) {
+      if (code === 'otp_expired' || /expired/i.test(description || '')) {
+        return 'Este link de redefinição expirou ou já foi usado. Abra o e-mail mais recente ou peça um novo link.';
+      }
+      return 'O link de redefinição não é válido. Abra o e-mail mais recente ou solicite um novo link.';
+    }
+
+    function storeRecoveryCredential(credential) {
+      recoverySession = credential;
+      try { sessionStorage.setItem(RECOVERY_CREDENTIAL_STORAGE_KEY, JSON.stringify(credential)); } catch (_e) {}
+    }
+
+    function readRecoveryCredential() {
+      if (recoverySession) return recoverySession;
+      try {
+        const raw = sessionStorage.getItem(RECOVERY_CREDENTIAL_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.token || parsed.expires_at <= Date.now()) {
+          sessionStorage.removeItem(RECOVERY_CREDENTIAL_STORAGE_KEY);
+          return null;
+        }
+        recoverySession = parsed;
+        return parsed;
+      } catch (_e) {
+        return null;
+      }
+    }
+
+    function clearRecoveryCredential() {
+      recoverySession = null;
+      try { sessionStorage.removeItem(RECOVERY_CREDENTIAL_STORAGE_KEY); } catch (_e) {}
+    }
+
+    async function exchangeRecoveryCode(code) {
+      let stored = null;
+      try {
+        stored = JSON.parse(localStorage.getItem(RECOVERY_VERIFIER_STORAGE_KEY) || 'null');
+        localStorage.removeItem(RECOVERY_VERIFIER_STORAGE_KEY);
+      } catch (_e) {}
+      if (!stored || !stored.verifier) {
+        return { error: 'Abra o link no mesmo navegador em que você pediu a redefinição.' };
+      }
+      const cfg = getSupabaseConfig();
+      const res = await fetch(`${cfg.url}/auth/v1/token?grant_type=pkce`, {
+        method: 'POST',
+        headers: { 'apikey': cfg.anonKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auth_code: code, code_verifier: stored.verifier })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.access_token) {
+        return { error: data.error_description || data.msg || 'Não foi possível validar o link de redefinição.' };
+      }
+      return {
+        credential: {
+          token: data.access_token,
+          email: (data.user && data.user.email) || '',
+          expires_at: Date.now() + Number(data.expires_in || 3600) * 1000
+        }
+      };
+    }
+
+    async function consumeRecoveryLinkFromUrl() {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get('code');
+      const hash = new URLSearchParams(url.hash.replace(/^#/, ''));
+      const recoveryToken = hash.get('access_token') && hash.get('type') === 'recovery' ? hash.get('access_token') : '';
+      const failed = hash.get('error') || '';
+      if (!code && !recoveryToken && !failed) return null;
+      if (code) return exchangeRecoveryCode(code);
+      window.history.replaceState(null, '', url.pathname);
+      if (failed) return { error: recoveryCredentialMessage(hash.get('error_code'), hash.get('error_description')) };
+      return { credential: { token: recoveryToken, email: '', expires_at: Date.now() + 3600000 } };
+    }
+
+    function openRecoveryForm(email) {
+      document.getElementById('login-existing-form').classList.add('hidden');
+      document.getElementById('recovery-form').classList.remove('hidden');
+      document.getElementById('recovery-email').textContent = email || 'E-MAIL';
+      document.getElementById('login-mode-banner').textContent = 'Link confirmado. Defina sua nova senha para entrar na ferramenta.';
+    }
+
+    function closeRecoveryForm() {
+      document.getElementById('recovery-form').classList.add('hidden');
+      document.getElementById('login-existing-form').classList.remove('hidden');
+      document.getElementById('login-mode-banner').textContent = 'Informe o e-mail cadastrado pela Secretaria e sua senha.';
+      ['rec-pw-new', 'rec-pw-new2'].forEach(id => { document.getElementById(id).value = ''; });
+      paintRules('rec-pw', '');
+    }
+
+    function cancelRecovery() {
+      clearRecoveryCredential();
+      closeRecoveryForm();
+      setLoginFeedback('warn', 'Redefinição cancelada. Peça um novo link quando precisar.');
+    }
+
+    async function handleRecoverySubmit(e) {
+      e.preventDefault();
+      const fb = document.getElementById('recovery-feedback');
+      const show = (kind, msg) => {
+        fb.className = `text-xs p-3 rounded border font-mono block ${kind === 'err' ? 'border-[#6b0f1a] bg-[#170306]' : 'border-[#10b981] bg-[#071f16]'} text-[#e6e6e1]`;
+        fb.textContent = msg;
+      };
+      const credential = readRecoveryCredential();
+      if (!credential) return show('err', 'Sessão de redefinição expirada. Peça um novo link de redefinição.');
+      const nw = document.getElementById('rec-pw-new').value;
+      const nw2 = document.getElementById('rec-pw-new2').value;
+      if (!paintRules('rec-pw', nw)) return show('err', 'A nova senha não atende à política de segurança.');
+      if (nw !== nw2) return show('err', 'A confirmação não confere.');
+      const cfg = getSupabaseConfig();
+      const email = (credential.email || document.getElementById('input-login-email').value).trim().toLowerCase();
+      const submit = e.currentTarget.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      show('ok', 'Aplicando nova senha...');
+      try {
+        const res = await fetch(`${cfg.url}/auth/v1/user`, {
+          method: 'PUT',
+          headers: { 'apikey': cfg.anonKey, 'Authorization': `Bearer ${credential.token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: nw })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error_description || data.msg || 'Não foi possível aplicar a nova senha.');
+        clearRecoveryCredential();
+        closeRecoveryForm();
+        document.getElementById('input-login-email').value = email;
+        const member = await signInWithPassword(email, nw);
+        await enterAuthenticatedApp(member);
+      } catch (error) {
+        show('err', error.message || 'Não foi possível aplicar a nova senha.');
+      } finally {
+        if (submit) submit.disabled = false;
+      }
+    }
+
     async function requestPasswordReset(email) {
       const normalizedEmail = String(email || '').trim().toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(normalizedEmail)) {
@@ -1267,14 +1441,30 @@
       const cfg = getSupabaseConfig();
       const body = { email: normalizedEmail };
       if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-        body.redirect_to = window.location.origin;
+        body.redirect_to = window.location.origin + window.location.pathname;
+        // No APK o link é aberto pelo navegador do sistema, então o resgate precisa ser do tipo
+        // implícito (sem verifier PKCE preso ao WebView).
+        if (!window.Capacitor) {
+          const pkce = await createPkcePair();
+          if (pkce) {
+            try {
+              localStorage.setItem(RECOVERY_VERIFIER_STORAGE_KEY, JSON.stringify({ verifier: pkce.verifier, at: Date.now() }));
+            } catch (_e) {}
+            body.code_challenge = pkce.challenge;
+            body.code_challenge_method = 'S256';
+          }
+        }
       }
       const res = await fetch(`${cfg.url}/auth/v1/recover`, {
         method: 'POST',
         headers: { 'apikey': cfg.anonKey, 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-      if (!res.ok) throw new Error('Não foi possível enviar o e-mail de redefinição.');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error_description || data.msg || data.error || 'Não foi possível enviar o e-mail de redefinição.');
+      }
+      clearRecoveryCredential();
     }
 
     async function logout() {
@@ -4040,6 +4230,39 @@
     setViewport('auto');
 
     (async function restoreSessionOnStartup() {
+      let recoveryOutcome = null;
+      try {
+        recoveryOutcome = await consumeRecoveryLinkFromUrl();
+      } catch (_e) {
+        recoveryOutcome = { error: 'Não foi possível validar o link de redefinição.' };
+      }
+      if (recoveryOutcome && recoveryOutcome.credential) {
+        storeRecoveryCredential(recoveryOutcome.credential);
+        clearAuthSession();
+        clearActiveSession();
+        hasLoggedInOnce = false;
+        selectActiveMember('m-05');
+        showAuthScreen('login', true);
+        openRecoveryForm(recoveryOutcome.credential.email || document.getElementById('input-login-email').value);
+        return;
+      }
+      if (recoveryOutcome && recoveryOutcome.error) {
+        clearAuthSession();
+        clearActiveSession();
+        hasLoggedInOnce = false;
+        selectActiveMember('m-05');
+        showAuthScreen('login', true);
+        setLoginFeedback('err', recoveryOutcome.error);
+        return;
+      }
+
+      const leftoverCredential = readRecoveryCredential();
+      if (leftoverCredential) {
+        showAuthScreen('login', true);
+        openRecoveryForm(leftoverCredential.email || document.getElementById('input-login-email').value);
+        return;
+      }
+
       try {
         const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
         if (hash.get('access_token') && hash.get('refresh_token')) {
