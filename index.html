@@ -94,6 +94,68 @@
     .mc-input:focus { border-color: #6b0f1a; box-shadow: 0 0 0 1px rgba(107, 15, 26, 0.45); }
     .mc-input[readonly] { color: #8a8c94; cursor: not-allowed; }
     .mc-label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8a8c94; margin-bottom: 0.25rem; }
+
+    #panel-reunioes { --mtg-muted: #a4a6af; }
+    #panel-reunioes .mtg-heading { font-size: 1.5rem; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+    #panel-reunioes .mtg-muted { color: var(--mtg-muted); font-size: .8rem; line-height: 1.6; }
+    #panel-reunioes .mtg-eyebrow { color: var(--mtg-muted); font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    #panel-reunioes .mtg-button { padding: .65rem .9rem; border: 1px solid #30313a; border-radius: .4rem; font-size: .8rem; font-weight: 700; background: #111217; color: #e6e6e1; transition: background .15s, border-color .15s; }
+    #panel-reunioes .mtg-button:hover { border-color: #9e2232; background: #1a1015; }
+    #panel-reunioes .mtg-primary { background: #6b0f1a; border-color: #a52638; }
+    #panel-reunioes .mtg-start { background: #0b3024; border-color: #288b69; color: #79e2b6; }
+    #panel-reunioes button:disabled { opacity: .5; cursor: not-allowed; }
+    #panel-reunioes :is(button, input, textarea):focus-visible { outline: 2px solid #c64c60; outline-offset: 3px; }
+    #panel-reunioes .mc-input { padding: .7rem .8rem; font-size: .85rem; border-color: #30313a; }
+    #panel-reunioes textarea.mc-input { line-height: 1.8; min-height: 240px; resize: vertical; }
+    #panel-reunioes #modal-new-meeting textarea { min-height: 110px; }
+    #panel-reunioes .mtg-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; }
+    #panel-reunioes .mtg-stat { text-align: left; padding: .9rem 1rem; border: 1px solid #272832; border-radius: .65rem; background: #0c0d12; }
+    #panel-reunioes .mtg-stat[aria-pressed="true"] { border-color: #a52638; background: #200c12; }
+    #panel-reunioes .mtg-stat strong { display: block; font-size: 1.6rem; line-height: 1.3; margin-bottom: .15rem; }
+    #panel-reunioes .mtg-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 1rem; align-items: start; }
+    #panel-reunioes .mtg-rail { background: #08090d; border: 1px solid #272832; border-radius: .7rem; padding: .85rem; position: sticky; top: 100px; }
+    #panel-reunioes .mtg-cards { display: grid; gap: .65rem; max-height: 660px; overflow-y: auto; padding: .25rem; margin: .65rem -.25rem 0; }
+    #panel-reunioes .mtg-card { width: 100%; text-align: left; padding: .9rem; border: 1px solid #272832; border-radius: .5rem; background: #101116; overflow-wrap: anywhere; }
+    #panel-reunioes .mtg-card:hover { border-color: #7a2937; }
+    #panel-reunioes .mtg-card[aria-pressed="true"] { background: #210d14; border-color: #b3354b; box-shadow: inset 3px 0 #b3354b; }
+    #panel-reunioes .mtg-card-title { display: block; font-size: .85rem; font-weight: 750; line-height: 1.5; margin: .65rem 0 .35rem; }
+    #panel-reunioes .mtg-badge { display: inline-block; padding: .2rem .5rem; border-radius: .3rem; font-size: .63rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; border: 1px solid #3d3e49; color: #c0c2cc; background: #18191f; }
+    #panel-reunioes .mtg-badge.waiting { color: #f2c477; background: #2b2010; border-color: #745323; }
+    #panel-reunioes .mtg-badge.live { color: #79e2b6; background: #0b3024; border-color: #288b69; }
+    #panel-reunioes .mtg-detail { min-width: 0; padding: 1.25rem; border: 1px solid #30313a; border-top: 3px solid #8c1927; border-radius: .7rem; background: #0b0c10; }
+    #panel-reunioes .mtg-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; padding: 1rem 0; }
+    #panel-reunioes .mtg-times { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; padding: 1rem 0; border-top: 1px solid #272832; }
+    #panel-reunioes .mtg-time { padding: .75rem; border: 1px solid #272832; border-radius: .4rem; min-width: 0; }
+    #panel-reunioes .mtg-time strong { display: block; font-size: .8rem; margin-top: .4rem; overflow-wrap: anywhere; }
+    #panel-reunioes .mtg-tabs { display: flex; border-bottom: 1px solid #30313a; gap: .2rem; overflow-x: auto; margin-top: .5rem; }
+    #panel-reunioes .mtg-tab { white-space: nowrap; padding: .8rem .85rem; color: #a4a6af; font-size: .8rem; font-weight: 700; border-bottom: 3px solid transparent; }
+    #panel-reunioes .mtg-tab[aria-selected="true"] { color: #fff; border-color: #c64c60; background: #241019; }
+    #panel-reunioes .mtg-tabpanel { padding-top: 1.25rem; min-height: 280px; }
+    #panel-reunioes .mtg-document { white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; font-size: .9rem; line-height: 1.9; color: #d9dae0; }
+    #panel-reunioes .mtg-agenda-list { padding-left: 1.35rem; list-style: decimal; }
+    #panel-reunioes .mtg-agenda-list li { padding: .5rem 0 .5rem .25rem; border-bottom: 1px solid #20212a; font-size: .85rem; line-height: 1.7; overflow-wrap: anywhere; user-select: text; }
+    #panel-reunioes .mtg-presence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin-top: 1rem; }
+    #panel-reunioes .mtg-member { display: flex; align-items: center; justify-content: space-between; gap: .5rem; text-align: left; padding: .8rem; border: 1px solid #30313a; border-radius: .4rem; background: #101116; min-width: 0; }
+    #panel-reunioes .mtg-member[aria-pressed="true"] { background: #0b3024; border-color: #288b69; }
+    #panel-reunioes .mtg-member[hidden] { display: none; }
+    #panel-reunioes :is(.mtg-detail, #modal-new-meeting) { scroll-margin-top: 100px; }
+    #panel-reunioes .mtg-member strong { font-size: .8rem; overflow-wrap: anywhere; }
+    #panel-reunioes .mtg-member small { display: block; color: #a4a6af; font-size: .65rem; overflow-wrap: anywhere; }
+    #panel-reunioes .mtg-empty { padding: 2.5rem 1rem; text-align: center; border: 1px dashed #3b3c46; border-radius: .6rem; }
+    #panel-reunioes .mtg-save-status { font-size: .75rem; color: #a4a6af; }
+    #panel-reunioes .mtg-save-status.dirty { color: #f2c477; }
+    @media (max-width: 1150px) {
+      #panel-reunioes .mtg-layout { grid-template-columns: minmax(0, 1fr); }
+      #panel-reunioes .mtg-rail { position: static; }
+      #panel-reunioes .mtg-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 340px; }
+    }
+    @media (max-width: 640px) {
+      #panel-reunioes .mtg-stats, #panel-reunioes .mtg-times { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #panel-reunioes .mtg-cards, #panel-reunioes .mtg-presence-grid { grid-template-columns: minmax(0, 1fr); }
+      #panel-reunioes .mtg-heading { font-size: 1.2rem; }
+      #panel-reunioes .mtg-detail { padding: 1rem; }
+      #panel-reunioes .mtg-tab { padding: .75rem .6rem; }
+    }
   </style>
 </head>
 <body class="antialiased m-0 p-0 select-none min-h-screen flex flex-col">
@@ -249,7 +311,7 @@
             <button type="submit" class="w-full py-2.5 px-4 rounded-sm mc-btn-burgundy text-xs">
               Entrar na Ferramenta
             </button>
-            <button type="button" onclick="requestPasswordReset()" class="w-full text-[11px] font-mono text-[#8a8c94] underline hover:text-[#e6e6e1]">
+            <button type="button" onclick="handlePasswordResetRequest()" class="w-full text-[11px] font-mono text-[#8a8c94] underline hover:text-[#e6e6e1]">
               Esqueci minha senha
             </button>
           </form>
@@ -415,59 +477,56 @@
         <!-- MÓDULO 2: REUNIÃO (INÍCIO/FIM, CHECKLIST, ATA ANTERIOR & PAUTA) -->
         <!-- ============================================================== -->
         <section id="panel-reunioes" class="hidden space-y-4">
-          <div class="mc-shield-panel rounded-lg p-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-3 py-2">
             <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <h2 class="mc-display-font text-sm text-[#e6e6e1]">Reunião — Carniceiros MC</h2>
-                <span class="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-sm bg-[#6b0f1a] text-[#e6e6e1]">
-                  Checklist • Ata Anterior • Pauta Atual • Registro de Horário
-                </span>
-              </div>
-              <p class="text-xs text-[#8a8c94] mt-1">Controle de abertura/encerramento com horário registrado, chamada em checklist dos 19 integrantes, ata da reunião anterior e pauta atual.</p>
+              <p class="mtg-eyebrow mb-1">Secretaria / Carniceiros MC</p>
+              <h2 class="mtg-heading">Reuniões do clube</h2>
+              <p class="mtg-muted mt-1">Do agendamento à ata: acompanhe cada encontro em um só lugar.</p>
             </div>
-            <button id="btn-new-meeting" onclick="openNewMeetingModal()" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
-              + Nova Reunião (BOB)
-            </button>
+            <button id="btn-new-meeting" onclick="openNewMeetingModal()" class="mtg-button mtg-primary" aria-expanded="false" aria-controls="modal-new-meeting">+ Agendar reunião</button>
           </div>
 
-          <form id="modal-new-meeting" onsubmit="createMeeting(event)" class="hidden mc-shield-panel rounded-lg p-4 space-y-3 border-2 border-[#6b0f1a]">
-            <div class="flex items-center justify-between border-b border-[#1a1b20] pb-2">
-              <div class="text-xs font-bold uppercase tracking-wider text-[#9e2232]">
-                Abrir / Agendar Nova Reunião (Exclusivo BOB • Secretaria)
-              </div>
-              <span class="text-[10px] font-mono text-[#8a8c94]">A Ata Anterior é preenchida automaticamente</span>
+          <form id="modal-new-meeting" onsubmit="createMeeting(event)" class="hidden mc-shield-panel rounded-lg p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#30313a] pb-3">
+              <h3 class="text-base font-bold">Agendar uma reunião</h3>
+              <span class="mtg-muted">A ata anterior é opcional e pode ser vinculada depois.</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div>
-                <label class="mc-label" for="mtg-title">Título da Reunião</label>
-                <input id="mtg-title" required placeholder="Ex: Reunião Mensal Ordinária — 2ª Terça" class="mc-input" />
-              </div>
-              <div>
-                <label class="mc-label" for="mtg-date">Data Prevista</label>
-                <input id="mtg-date" type="date" required value="2026-12-08" class="mc-input font-mono" />
-              </div>
-              <div>
-                <label class="mc-label" for="mtg-loc">Local da Reunião</label>
-                <input id="mtg-loc" required value="Sede Comando Central — Galpão Carniceiros MC (Curitiba - PR)" placeholder="Local (ex: Sede Curitiba - PR)" class="mc-input" />
-              </div>
+            <div>
+              <label class="mc-label" for="mtg-title">Título da reunião</label>
+              <input id="mtg-title" required maxlength="160" placeholder="Ex.: Reunião mensal de dezembro" class="mc-input" />
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="mc-label" for="mtg-prev-minutes">Ata da Reunião Anterior (Referência)</label>
-                <textarea id="mtg-prev-minutes" rows="3" required placeholder="Resumo/Ata da reunião anterior..." class="mc-input"></textarea>
+                <label class="mc-label" for="mtg-date">Data prevista</label>
+                <input id="mtg-date" type="date" required class="mc-input" />
               </div>
               <div>
-                <label class="mc-label" for="mtg-agenda">Pauta dessa Reunião Atual</label>
-                <textarea id="mtg-agenda" rows="3" required placeholder="1. Abertura e leitura da ata anterior; 2. Tópicos do dia..." class="mc-input"></textarea>
+                <label class="mc-label" for="mtg-time">Horário previsto</label>
+                <input id="mtg-time" type="time" required value="20:00" class="mc-input" />
               </div>
             </div>
             <div>
-              <label class="mc-label" for="mtg-minutes">Apontamentos / Ata da Reunião Atual (opcional na abertura)</label>
-              <textarea id="mtg-minutes" rows="2" placeholder="Deliberações registradas durante a reunião..." class="mc-input"></textarea>
+              <label class="mc-label" for="mtg-loc">Local</label>
+              <input id="mtg-loc" required maxlength="300" value="Sede Comando Central — Galpão Carniceiros MC (Curitiba - PR)" class="mc-input" />
             </div>
+            <div>
+              <label class="mc-label" for="mtg-agenda">Pauta</label>
+              <textarea id="mtg-agenda" rows="4" required placeholder="Escreva um assunto por linha..." class="mc-input"></textarea>
+            </div>
+            <details class="border border-[#30313a] rounded-lg p-3 space-y-3">
+              <summary class="text-sm font-bold cursor-pointer">Ata anterior e anotações iniciais (opcional)</summary>
+              <div class="pt-3">
+                <label class="mc-label" for="mtg-prev-minutes">Ata anterior</label>
+                <textarea id="mtg-prev-minutes" rows="3" placeholder="Referência à última reunião encerrada..." class="mc-input"></textarea>
+              </div>
+              <div>
+                <label class="mc-label" for="mtg-minutes">Anotações iniciais</label>
+                <textarea id="mtg-minutes" rows="3" placeholder="Anotações para a Secretaria..." class="mc-input"></textarea>
+              </div>
+            </details>
             <div class="flex justify-end gap-2">
-              <button type="button" onclick="toggleElement('modal-new-meeting')" class="px-3 py-1.5 text-xs rounded border border-[#1a1b20] bg-[#060608]">Cancelar</button>
-              <button type="submit" class="px-4 py-1.5 text-xs rounded-sm mc-btn-burgundy">Criar Reunião</button>
+              <button type="button" onclick="openNewMeetingModal()" class="mtg-button">Cancelar</button>
+              <button type="submit" class="mtg-button mtg-primary">Agendar reunião</button>
             </div>
           </form>
 
@@ -1219,6 +1278,9 @@
     }
 
     async function logout() {
+      if (meetingDrafts.size && !confirm('Há alterações de reunião não salvas. Sair e descartá-las?')) return;
+      meetingDrafts.clear();
+      meetingSaveStates.clear();
       const cfg = getSupabaseConfig();
       if (supabaseSession && supabaseSession.access_token) {
         try {
@@ -1247,6 +1309,7 @@
     }
 
     function isUserActivelyEditing() {
+      if (meetingDrafts.size) return true;
       try {
         const ae = document.activeElement;
         if (ae) {
@@ -1429,9 +1492,9 @@
         }
 
         // 3. Reuniões, Agenda, Tarefas e Sugestões
-        if (Object.prototype.hasOwnProperty.call(mapByKey, 'meetings') && Array.isArray(mapByKey.meetings) && mapByKey.meetings.length > 0) {
+        if (Object.prototype.hasOwnProperty.call(mapByKey, 'meetings') && Array.isArray(mapByKey.meetings)) {
           meetings = mapByKey.meetings;
-          if (!meetings.some(m => m.id === selectedMeetingId)) selectedMeetingId = meetings[0].id;
+          if (!meetings.some(m => m.id === selectedMeetingId)) selectedMeetingId = getSortedMeetings()[0]?.id || null;
           try { localStorage.setItem(MEETINGS_STORAGE_KEY, JSON.stringify(meetings)); } catch (_e) {}
         } else if (!Object.prototype.hasOwnProperty.call(mapByKey, 'meetings') && localStorage.getItem(MEETINGS_STORAGE_KEY)) {
           pushCloudStateKey('meetings', meetings);
@@ -2360,26 +2423,126 @@
 
     // ===================== MÓDULO REUNIÃO (INÍCIO/FIM, CHECKLIST, ATA ANTERIOR & PAUTA ATUAL) =====================
     const MEETINGS_STORAGE_KEY = 'cmc_meetings_v1';
+    const meetingDrafts = new Map();
+    const meetingSaveStates = new Map();
+    let meetingFilter = 'TODOS';
+    let meetingSearch = '';
+    let meetingDetailTab = 'resumo';
+    let meetingMemberSearch = '';
+    const MEETING_STATUS_META = {
+      AGUARDANDO: { label: 'Agendada', cls: 'waiting', order: 1 },
+      EM_ANDAMENTO: { label: 'Ao vivo', cls: 'live', order: 0 },
+      ENCERRADA: { label: 'Encerrada', cls: '', order: 2 }
+    };
+
+    function meetingDateValue(meeting) {
+      const match = (meeting.date || '').match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s*•\s*(\d{2}):(\d{2}))?/);
+      return match ? new Date(+match[3], +match[2] - 1, +match[1], +(match[4] || 0), +(match[5] || 0)).getTime() : 0;
+    }
+
+    function getSortedMeetings() {
+      return [...meetings].sort((a, b) => {
+        const order = MEETING_STATUS_META[a.status].order - MEETING_STATUS_META[b.status].order;
+        return order || (a.status === 'ENCERRADA' ? meetingDateValue(b) - meetingDateValue(a) : meetingDateValue(a) - meetingDateValue(b));
+      });
+    }
+
+    function normalizeMeetingText(text) {
+      return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+    }
+
+    function getFilteredMeetings() {
+      const query = normalizeMeetingText(meetingSearch.trim());
+      return getSortedMeetings().filter(m => (meetingFilter === 'TODOS' || m.status === meetingFilter) &&
+        normalizeMeetingText(`${m.title} ${m.date} ${m.location}`).includes(query));
+    }
+
+    function getPreviousMeeting(meeting) {
+      return meetings.filter(m => m.id !== meeting.id && m.status === 'ENCERRADA' && meetingDateValue(m) < meetingDateValue(meeting))
+        .sort((a, b) => meetingDateValue(b) - meetingDateValue(a))[0];
+    }
+
+    function meetingButton(text, action, className = '') {
+      const button = el('button', `mtg-button ${className}`, text);
+      button.type = 'button';
+      button.onclick = action;
+      return button;
+    }
+
+    function meetingDocumentValue(meeting, field) {
+      return meetingDrafts.get(meeting.id)?.[field] ?? meeting[field] ?? '';
+    }
+
+    function setMeetingDraft(meeting, field, value) {
+      const draft = { ...meetingDrafts.get(meeting.id), [field]: value };
+      if (value === (meeting[field] || '')) delete draft[field];
+      if (Object.keys(draft).length) meetingDrafts.set(meeting.id, draft);
+      else meetingDrafts.delete(meeting.id);
+      updateMeetingSaveFeedback();
+      renderMeetingCards();
+    }
+
+    function updateMeetingSaveFeedback() {
+      const m = getActiveMeetingObj();
+      if (!m) return;
+      const status = document.getElementById('meeting-save-status');
+      const button = document.getElementById('meeting-save-docs');
+      const dirty = meetingDrafts.has(m.id);
+      const state = meetingSaveStates.get(m.id);
+      if (status) {
+        status.className = `mtg-save-status${dirty ? ' dirty' : ''}`;
+        status.textContent = state?.saving ? 'Salvando alterações...' : dirty ? 'Alterações não salvas — preservadas ao trocar de aba ou reunião.' : state?.message || 'Nenhuma alteração pendente.';
+      }
+      if (button) {
+        button.disabled = (!dirty && !state?.cloudPending) || !!state?.saving;
+        button.textContent = state?.cloudPending && !dirty ? 'Sincronizar novamente' : 'Salvar alterações';
+      }
+    }
+
+    async function saveMeetingDocuments(meetingId) {
+      if (!canFullEdit() || meetingSaveStates.get(meetingId)?.saving) return;
+      const m = meetings.find(x => x.id === meetingId);
+      const draft = meetingDrafts.get(meetingId);
+      if (!m || (!draft && !meetingSaveStates.get(meetingId)?.cloudPending)) return;
+      const previous = draft ? Object.fromEntries(Object.keys(draft).map(field => [field, m[field]])) : {};
+      if (draft) Object.assign(m, draft);
+      meetingSaveStates.set(meetingId, { saving: true });
+      updateMeetingSaveFeedback();
+      const result = await persistMeetings();
+      if (result.localSaved && meetingDrafts.get(meetingId) === draft) meetingDrafts.delete(meetingId);
+      if (!result.localSaved) Object.assign(m, previous);
+      meetingSaveStates.set(meetingId, { cloudPending: result.localSaved && !result.cloudSaved, message: !result.localSaved ? 'Não foi possível salvar neste navegador. Tente novamente.' : result.cloudSaved ? 'Salvo neste navegador e sincronizado na nuvem.' : 'Salvo neste navegador. Nuvem indisponível; tente sincronizar novamente.' });
+      updateMeetingSaveFeedback();
+      renderMeetingCards();
+    }
+
+    window.addEventListener('beforeunload', event => {
+      if (!meetingDrafts.size) return;
+      event.preventDefault();
+      event.returnValue = '';
+    });
 
     function loadSavedMeetings() {
       try {
         const raw = localStorage.getItem(MEETINGS_STORAGE_KEY);
         if (!raw) return;
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           meetings = parsed;
           if (!meetings.some(m => m.id === selectedMeetingId)) {
-            selectedMeetingId = meetings[0].id;
+            selectedMeetingId = getSortedMeetings()[0]?.id || null;
           }
         }
       } catch (_e) {}
     }
 
-    function persistMeetings() {
+    async function persistMeetings() {
       try {
         localStorage.setItem(MEETINGS_STORAGE_KEY, JSON.stringify(meetings));
-        pushCloudStateKey('meetings', meetings);
-      } catch (_e) {}
+      } catch (_e) {
+        return { localSaved: false, cloudSaved: false };
+      }
+      return { localSaved: true, cloudSaved: await pushCloudStateKey('meetings', meetings) };
     }
 
     function formatNowTimestamp() {
@@ -2394,25 +2557,32 @@
     }
 
     function getActiveMeetingObj() {
-      return meetings.find(m => m.id === selectedMeetingId) || meetings[0];
+      return meetings.find(m => m.id === selectedMeetingId) || getSortedMeetings()[0];
     }
 
     function openNewMeetingModal() {
       if (!canFullEdit()) return;
       const modal = document.getElementById('modal-new-meeting');
-      if (!modal) return;
-      const isHidden = modal.classList.contains('hidden');
-      if (isHidden) {
-        const prevInput = document.getElementById('mtg-prev-minutes');
-        const latest = meetings[0];
-        if (prevInput && latest) {
-          prevInput.value = `Ref. ${latest.title} (${latest.date}): ${latest.minutes || ''}`;
+      const opening = modal.classList.contains('hidden');
+      if (opening) {
+        if (!document.getElementById('mtg-date').value) {
+          const today = new Date();
+          document.getElementById('mtg-date').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         }
+        const prevInput = document.getElementById('mtg-prev-minutes');
+        const latest = meetings.filter(m => m.status === 'ENCERRADA').sort((a, b) => meetingDateValue(b) - meetingDateValue(a))[0];
+        if (!prevInput.value && latest) prevInput.value = `Ata de ${latest.date}: ${latest.minutes || ''}`;
       }
       modal.classList.toggle('hidden');
+      document.getElementById('btn-new-meeting').setAttribute('aria-expanded', String(opening));
+      if (opening) {
+        modal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        document.getElementById('mtg-title').focus({ preventScroll: true });
+      } else document.getElementById('btn-new-meeting').focus({ preventScroll: true });
     }
 
     function toggleMeetingStartEnd(meetingId) {
+      if (!canFullEdit()) return;
       const m = meetings.find(x => x.id === meetingId);
       if (!m) return;
       if (m.status === 'AGUARDANDO') {
@@ -2420,6 +2590,11 @@
         m.startedAt = formatNowTimestamp();
         m.endedAt = null;
       } else if (m.status === 'EM_ANDAMENTO') {
+        if (meetingDrafts.has(meetingId)) {
+          alert('Salve as alterações da pauta e da ata antes de encerrar a reunião.');
+          return;
+        }
+        if (!confirm('Encerrar esta reunião e registrar o horário de término?')) return;
         m.status = 'ENCERRADA';
         m.endedAt = formatNowTimestamp();
       }
@@ -2441,7 +2616,7 @@
     function resetMeetingClock(meetingId) {
       if (!canFullEdit()) return;
       const m = meetings.find(x => x.id === meetingId);
-      if (!m) return;
+      if (!m || !confirm('Limpar os horários registrados e voltar esta reunião para Agendada? A ata e a presença serão mantidas.')) return;
       m.status = 'AGUARDANDO';
       m.startedAt = null;
       m.endedAt = null;
@@ -2450,8 +2625,9 @@
     }
 
     function toggleMemberPresenceInMeeting(meetingId, memberId) {
+      if (!canFullEdit()) return;
       const m = meetings.find(x => x.id === meetingId);
-      if (!m) return;
+      if (!m || m.status === 'ENCERRADA') return;
       if (!Array.isArray(m.presentMemberIds)) m.presentMemberIds = [];
       const idx = m.presentMemberIds.indexOf(memberId);
       if (idx >= 0) {
@@ -2464,8 +2640,10 @@
     }
 
     function setAllMembersPresenceInMeeting(meetingId, markPresent) {
+      if (!canFullEdit()) return;
       const m = meetings.find(x => x.id === meetingId);
-      if (!m) return;
+      if (!m || m.status === 'ENCERRADA') return;
+      if (!markPresent && !confirm('Remover todas as presenças desta reunião?')) return;
       if (markPresent) {
         m.presentMemberIds = clubMembers.filter(mem => mem.status === 'ATIVO').map(mem => mem.id);
       } else {
@@ -2475,264 +2653,279 @@
       renderMeetings();
     }
 
+    function renderMeetingCards() {
+      const cards = document.getElementById('meeting-cards');
+      if (!cards) return;
+      cards.replaceChildren();
+      const filtered = getFilteredMeetings();
+      document.getElementById('meeting-result-count').textContent = `${filtered.length} de ${meetings.length} reuniões`;
+      if (!filtered.length) {
+        const empty = el('div', 'mtg-empty');
+        empty.append(el('p', 'text-sm font-bold', 'Nenhuma reunião encontrada.'), el('p', 'mtg-muted mt-2', 'Tente outro termo ou remova os filtros.'));
+        empty.appendChild(meetingButton('Limpar filtros', () => { meetingSearch = ''; meetingFilter = 'TODOS'; renderMeetings(); }));
+        cards.appendChild(empty);
+      }
+      filtered.forEach(m => {
+        const meta = MEETING_STATUS_META[m.status];
+        const card = el('button', 'mtg-card');
+        card.type = 'button';
+        card.id = `meeting-card-${m.id}`;
+        card.setAttribute('aria-pressed', String(m.id === selectedMeetingId));
+        card.append(el('span', `mtg-badge ${meta.cls}`, meta.label), el('strong', 'mtg-card-title', m.title), el('span', 'mtg-muted block', m.date), el('span', 'mtg-muted block', m.location));
+        if (meetingDrafts.has(m.id)) card.appendChild(el('span', 'mtg-save-status dirty block mt-2', 'Alterações não salvas'));
+        card.onclick = () => {
+          selectedMeetingId = m.id;
+          meetingMemberSearch = '';
+          renderMeetings();
+          document.getElementById(`meeting-card-${m.id}`)?.focus({ preventScroll: true });
+          if (window.matchMedia('(max-width: 1150px)').matches) document.getElementById('meeting-detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        cards.appendChild(card);
+      });
+    }
+
+    function renderMeetingDocument(parent, m, field, label, placeholder, editable) {
+      const heading = el('label', 'mc-label mb-2', label);
+      heading.htmlFor = `meeting-doc-${field}`;
+      parent.appendChild(heading);
+      if (editable) {
+        const input = el('textarea', 'mc-input');
+        input.id = heading.htmlFor;
+        input.rows = field === 'minutes' ? 12 : 8;
+        input.value = meetingDocumentValue(m, field);
+        input.placeholder = placeholder;
+        input.oninput = () => setMeetingDraft(m, field, input.value);
+        parent.appendChild(input);
+      } else parent.appendChild(el('p', 'mtg-document', m[field] || placeholder));
+    }
+
+    function renderMeetingPresence(parent, m, editable) {
+      const members = clubMembers.filter(mem => mem.status === 'ATIVO');
+      const presentIds = m.presentMemberIds || [];
+      const canMark = editable && m.status !== 'ENCERRADA';
+      parent.append(el('h4', 'text-base font-bold', 'Chamada dos integrantes'), el('p', 'mtg-muted mt-1', canMark ? 'Clique no nome para marcar ou desmarcar a presença.' : m.status === 'ENCERRADA' ? 'Registro encerrado. A Secretaria pode reabrir a reunião para alterar a chamada.' : 'Presenças registradas pela Secretaria.'));
+      const tools = el('div', 'mtg-toolbar');
+      const searchWrap = el('div', 'flex-1 min-w-0');
+      const label = el('label', 'mc-label', 'Buscar integrante');
+      label.htmlFor = 'meeting-member-search';
+      const search = el('input', 'mc-input');
+      search.id = label.htmlFor;
+      search.type = 'search';
+      search.placeholder = 'Nome ou cargo';
+      search.value = meetingMemberSearch;
+      searchWrap.append(label, search);
+      tools.appendChild(searchWrap);
+      if (canMark) {
+        tools.append(meetingButton('Marcar todos', () => setAllMembersPresenceInMeeting(m.id, true)), meetingButton('Limpar chamada', () => setAllMembersPresenceInMeeting(m.id, false)));
+      }
+      parent.appendChild(tools);
+      const grid = el('div', 'mtg-presence-grid');
+      const rows = [];
+      members.forEach(mem => {
+        const present = presentIds.includes(mem.id);
+        const row = el(canMark ? 'button' : 'div', 'mtg-member');
+        row.id = `meeting-member-${mem.id}`;
+        if (canMark) {
+          row.type = 'button';
+          row.setAttribute('aria-pressed', String(present));
+          row.setAttribute('aria-label', `${mem.roadName}: ${present ? 'presente' : 'ausente'}`);
+          row.onclick = () => {
+            toggleMemberPresenceInMeeting(m.id, mem.id);
+            document.getElementById(row.id)?.focus({ preventScroll: true });
+          };
+        } else if (present) row.style.borderColor = '#288b69';
+        const name = el('div', 'min-w-0');
+        name.append(el('strong', '', mem.roadName), el('small', '', mem.rankLabel));
+        row.append(name, el('span', `mtg-badge ${present ? 'live' : ''}`, present ? 'Presente' : 'Ausente'));
+        rows.push({ row, text: normalizeMeetingText(`${mem.roadName} ${mem.rankLabel}`) });
+        grid.appendChild(row);
+      });
+      parent.appendChild(grid);
+      const noMatch = el('p', 'mtg-muted mt-3', 'Nenhum integrante encontrado.');
+      parent.appendChild(noMatch);
+      function filterMembers() {
+        const query = normalizeMeetingText(meetingMemberSearch.trim());
+        let count = 0;
+        rows.forEach(({ row, text }) => { const matches = text.includes(query); row.hidden = !matches; if (matches) count++; });
+        noMatch.hidden = count > 0;
+      }
+      search.oninput = () => { meetingMemberSearch = search.value; filterMembers(); };
+      filterMembers();
+      const names = members.filter(mem => presentIds.includes(mem.id)).map(mem => mem.roadName);
+      parent.appendChild(el('p', 'mtg-document mt-4 text-sm', names.length ? `Presentes (${names.length}): ${names.join(' • ')}` : 'Nenhuma presença registrada.'));
+    }
+
     function renderMeetings() {
       const container = document.getElementById('meetings-list');
       if (!container) return;
-      container.innerHTML = '';
-      const activeUser = getActiveMember();
-      const isBob = canFullEdit(activeUser);
-
-      // Atualiza badge do menu lateral "Reunião"
+      container.replaceChildren();
+      const editable = canFullEdit();
+      document.getElementById('btn-new-meeting').classList.toggle('hidden', !editable);
+      if (!editable) {
+        document.getElementById('modal-new-meeting').classList.add('hidden');
+        document.getElementById('btn-new-meeting').setAttribute('aria-expanded', 'false');
+      }
       const menuBadge = document.getElementById('meeting-menu-badge');
-      const liveMtg = meetings.find(x => x.status === 'EM_ANDAMENTO');
       if (menuBadge) {
-        if (liveMtg) {
-          menuBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#071f16] border border-[#10b981] text-[#10b981] font-bold';
-          menuBadge.textContent = '● AO VIVO';
-        } else {
-          menuBadge.className = 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#020203] border border-[#1a1b20] text-[#8a8c94]';
-          menuBadge.textContent = `${meetings.length} REG`;
-        }
+        const live = meetings.some(m => m.status === 'EM_ANDAMENTO');
+        menuBadge.textContent = live ? 'AO VIVO' : `${meetings.length} REG`;
+        menuBadge.className = live ? 'text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#071f16] text-[#10b981] font-bold' : 'text-[10px] font-mono px-1.5 py-0.5 rounded text-[#8a8c94]';
       }
-
-      if (!meetings.length) return;
-      const m = getActiveMeetingObj();
-      if (!Array.isArray(m.presentMemberIds)) m.presentMemberIds = [];
-
-      // 1. SELETOR DE REUNIÕES (REUNIÃO ATUAL vs ANTERIORES)
-      const selectorBar = el('div', 'bg-[#020203] border border-[#1a1b20] rounded-lg p-3 flex flex-wrap items-center justify-between gap-2');
-      const selLeft = el('div', 'flex flex-wrap items-center gap-1.5');
-      selLeft.appendChild(el('span', 'text-[10px] font-mono uppercase tracking-widest text-[#8a8c94] mr-1', 'Selecionar Reunião:'));
-      meetings.forEach((mtgItem, idx) => {
-        const isSel = mtgItem.id === m.id;
-        const stIcon = mtgItem.status === 'EM_ANDAMENTO' ? '🟢 ' : mtgItem.status === 'ENCERRADA' ? '🏁 ' : '⏳ ';
-        const btn = el('button', isSel
-          ? 'px-3 py-1.5 rounded-sm text-xs font-bold uppercase mc-rocker-patch text-[#e6e6e1]'
-          : 'px-3 py-1.5 rounded-sm text-xs font-bold uppercase bg-[#060608] border border-[#1a1b20] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a]',
-          `${stIcon}${idx === 0 ? 'Reunião Atual: ' : ''}${mtgItem.date.split('•')[0].trim()}`);
-        btn.type = 'button';
-        btn.onclick = () => {
-          selectedMeetingId = mtgItem.id;
+      const stats = el('div', 'mtg-stats');
+      [['TODOS', 'Todas as reuniões'], ['AGUARDANDO', 'Agendadas'], ['EM_ANDAMENTO', 'Ao vivo'], ['ENCERRADA', 'Encerradas']].forEach(([filter, label]) => {
+        const count = filter === 'TODOS' ? meetings.length : meetings.filter(m => m.status === filter).length;
+        const button = el('button', 'mtg-stat');
+        button.type = 'button';
+        button.id = `meeting-filter-${filter}`;
+        button.setAttribute('aria-pressed', String(meetingFilter === filter));
+        button.append(el('strong', '', String(count)), el('span', 'mtg-muted', label));
+        button.onclick = () => {
+          meetingFilter = filter;
+          const filtered = getFilteredMeetings();
+          if (filtered.length && !filtered.some(m => m.id === selectedMeetingId)) selectedMeetingId = filtered[0].id;
           renderMeetings();
+          document.getElementById(button.id).focus({ preventScroll: true });
         };
-        selLeft.appendChild(btn);
+        stats.appendChild(button);
       });
-      selectorBar.appendChild(selLeft);
-      container.appendChild(selectorBar);
-
-      // 2. PAINEL PRINCIPAL DE COMANDO DA REUNIÃO + BOTÃO INICIAR / FINALIZAR REUNIÃO (HORÁRIO DE INÍCIO E FIM)
-      const sessionPanel = el('div', 'mc-shield-panel rounded-lg p-4 space-y-4');
-      const headerRow = el('div', 'flex flex-wrap items-start justify-between gap-3 border-b border-[#1a1b20] pb-3');
-      const titleCol = el('div', 'space-y-1');
-      const statusBadgeMap = {
-        AGUARDANDO: { text: '⏳ AGUARDANDO INÍCIO', cls: 'bg-[#1c1406] border-[#f59e0b] text-[#f59e0b]' },
-        EM_ANDAMENTO: { text: '🟢 REUNIÃO EM ANDAMENTO', cls: 'bg-[#071f16] border-[#10b981] text-[#10b981]' },
-        ENCERRADA: { text: '🏁 REUNIÃO FINALIZADA', cls: 'bg-[#0d0e12] border-[#6b0f1a] text-[#e6e6e1]' }
-      };
-      const stMeta = statusBadgeMap[m.status] || statusBadgeMap.AGUARDANDO;
-      const titleBadges = el('div', 'flex flex-wrap items-center gap-2');
-      titleBadges.appendChild(el('h3', 'mc-display-font text-sm text-[#e6e6e1]', m.title));
-      titleBadges.appendChild(el('span', `text-[10px] font-mono font-bold px-2 py-0.5 rounded-sm border ${stMeta.cls}`, stMeta.text));
-      titleCol.appendChild(titleBadges);
-      titleCol.appendChild(el('p', 'text-xs font-mono text-[#8a8c94]', `📍 Data prevista: ${m.date} • Local: ${m.location}`));
-      headerRow.appendChild(titleCol);
-
-      // Botões de Iniciar / Finalizar Reunião
-      const clockActions = el('div', 'flex flex-wrap items-center gap-2');
-      if (m.status === 'AGUARDANDO') {
-        const startBtn = el('button', 'px-4 py-2.5 rounded-sm text-xs font-black uppercase tracking-wider bg-[#071f16] border-2 border-[#10b981] text-[#10b981] hover:bg-[#10b981] hover:text-[#020203] transition shadow-lg', '▶ Iniciar Reunião');
-        startBtn.type = 'button';
-        startBtn.onclick = () => toggleMeetingStartEnd(m.id);
-        clockActions.appendChild(startBtn);
-      } else if (m.status === 'EM_ANDAMENTO') {
-        const endBtn = el('button', 'px-4 py-2.5 rounded-sm text-xs font-black uppercase tracking-wider mc-btn-burgundy shadow-lg', '■ Finalizar Reunião');
-        endBtn.type = 'button';
-        endBtn.onclick = () => toggleMeetingStartEnd(m.id);
-        clockActions.appendChild(endBtn);
-      } else if (m.status === 'ENCERRADA') {
-        clockActions.appendChild(el('span', 'px-3 py-1.5 rounded-sm text-xs font-mono font-bold bg-[#020203] border border-[#10b981]/60 text-[#10b981]', '✓ Horários Gravados no Registro'));
-        if (isBob) {
-          const reopenBtn = el('button', 'px-2.5 py-1.5 rounded-sm text-[11px] font-bold uppercase bg-[#060608] border border-[#1a1b20] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a]', '↺ Reabrir Reunião');
-          reopenBtn.type = 'button';
-          reopenBtn.onclick = () => reopenMeeting(m.id);
-          clockActions.appendChild(reopenBtn);
+      container.appendChild(stats);
+      if (!meetings.length) {
+        const empty = el('div', 'mtg-empty');
+        empty.append(el('h3', 'text-lg font-bold', 'Ainda não há reuniões agendadas.'), el('p', 'mtg-muted mt-2', editable ? 'Agende o primeiro encontro e organize a pauta do clube.' : 'As reuniões aparecerão aqui assim que a Secretaria agendar um encontro.'));
+        if (editable) empty.appendChild(meetingButton('Agendar primeira reunião', openNewMeetingModal, 'mtg-primary mt-4'));
+        container.appendChild(empty);
+        return;
+      }
+      const m = getActiveMeetingObj();
+      selectedMeetingId = m.id;
+      const layout = el('div', 'mtg-layout');
+      const rail = el('aside', 'mtg-rail');
+      rail.setAttribute('aria-label', 'Lista de reuniões');
+      const searchLabel = el('label', 'mc-label', 'Buscar reunião');
+      searchLabel.htmlFor = 'meeting-search';
+      const search = el('input', 'mc-input');
+      search.id = searchLabel.htmlFor;
+      search.type = 'search';
+      search.placeholder = 'Título, data ou local';
+      search.value = meetingSearch;
+      search.oninput = () => { meetingSearch = search.value; renderMeetingCards(); };
+      const count = el('p', 'mtg-muted mt-2');
+      count.id = 'meeting-result-count';
+      count.setAttribute('aria-live', 'polite');
+      const cards = el('div', 'mtg-cards');
+      cards.id = 'meeting-cards';
+      rail.append(searchLabel, search, count, cards);
+      const detail = el('article', 'mtg-detail');
+      detail.id = 'meeting-detail';
+      detail.setAttribute('aria-labelledby', 'meeting-detail-title');
+      const meta = MEETING_STATUS_META[m.status];
+      const badges = el('div', 'flex flex-wrap gap-2 mb-3');
+      badges.append(el('span', `mtg-badge ${meta.cls}`, meta.label), el('span', 'mtg-eyebrow self-center', editable ? 'Edição da Secretaria' : 'Somente leitura'));
+      const title = el('h3', 'mtg-heading mb-3', m.title);
+      title.id = 'meeting-detail-title';
+      detail.append(badges, title, el('p', 'text-sm font-bold', m.date), el('p', 'mtg-muted mt-1', m.location));
+      const actions = el('div', 'mtg-toolbar');
+      if (editable) {
+        if (m.status === 'AGUARDANDO') actions.appendChild(meetingButton('Iniciar reunião', () => toggleMeetingStartEnd(m.id), 'mtg-start'));
+        if (m.status === 'EM_ANDAMENTO') actions.appendChild(meetingButton('Encerrar reunião', () => toggleMeetingStartEnd(m.id), 'mtg-primary'));
+        if (m.status === 'ENCERRADA') actions.appendChild(meetingButton('Reabrir reunião', () => reopenMeeting(m.id)));
+        if (m.startedAt || m.endedAt) actions.appendChild(meetingButton('Limpar horários', () => resetMeetingClock(m.id)));
+      } else actions.appendChild(el('p', 'mtg-muted', 'A Secretaria gerencia a pauta, a ata e as presenças.'));
+      detail.appendChild(actions);
+      const members = clubMembers.filter(mem => mem.status === 'ATIVO');
+      const present = members.filter(mem => (m.presentMemberIds || []).includes(mem.id)).length;
+      const times = el('div', 'mtg-times');
+      [['Início registrado', m.startedAt || 'Não iniciada'], ['Encerramento', m.endedAt || (m.status === 'EM_ANDAMENTO' ? 'Em andamento' : 'Não registrado')], ['Presença', `${present} / ${members.length} integrantes`]].forEach(([label, value]) => {
+        const card = el('div', 'mtg-time');
+        card.append(el('span', 'mtg-eyebrow', label), el('strong', '', value));
+        times.appendChild(card);
+      });
+      detail.appendChild(times);
+      if (editable) {
+        const saveRow = el('div', 'mtg-toolbar border-t border-[#272832]');
+        const status = el('p', 'mtg-save-status flex-1');
+        status.id = 'meeting-save-status';
+        status.setAttribute('role', 'status');
+        const save = meetingButton('Salvar alterações', () => saveMeetingDocuments(m.id), 'mtg-primary');
+        save.id = 'meeting-save-docs';
+        saveRow.append(status, save);
+        detail.appendChild(saveRow);
+      }
+      const tabItems = [['resumo', 'Resumo'], ['pauta', 'Pauta'], ['ata', 'Ata'], ['presenca', `Presença (${present})`]];
+      const tabs = el('div', 'mtg-tabs');
+      tabs.setAttribute('role', 'tablist');
+      tabs.setAttribute('aria-label', 'Conteúdo da reunião');
+      function selectDetailTab(tab) {
+        meetingDetailTab = tab;
+        renderMeetings();
+        document.getElementById(`meeting-tab-${tab}`).focus({ preventScroll: true });
+      }
+      tabItems.forEach(([tab, label], index) => {
+        const button = el('button', 'mtg-tab', label);
+        button.type = 'button';
+        button.id = `meeting-tab-${tab}`;
+        button.setAttribute('role', 'tab');
+        button.setAttribute('aria-selected', String(meetingDetailTab === tab));
+        button.setAttribute('aria-controls', 'meeting-tab-content');
+        button.tabIndex = meetingDetailTab === tab ? 0 : -1;
+        button.onclick = () => selectDetailTab(tab);
+        button.onkeydown = event => {
+          let next;
+          if (event.key === 'ArrowRight') next = (index + 1) % tabItems.length;
+          if (event.key === 'ArrowLeft') next = (index + tabItems.length - 1) % tabItems.length;
+          if (event.key === 'Home') next = 0;
+          if (event.key === 'End') next = tabItems.length - 1;
+          if (next !== undefined) { event.preventDefault(); selectDetailTab(tabItems[next][0]); }
+        };
+        tabs.appendChild(button);
+      });
+      detail.appendChild(tabs);
+      const content = el('div', 'mtg-tabpanel space-y-3');
+      content.id = 'meeting-tab-content';
+      content.setAttribute('role', 'tabpanel');
+      content.setAttribute('aria-labelledby', `meeting-tab-${meetingDetailTab}`);
+      content.tabIndex = 0;
+      if (meetingDetailTab === 'resumo') {
+        content.append(el('h4', 'text-base font-bold', 'Pauta em destaque'), el('p', 'mtg-muted', 'O que será discutido neste encontro.'));
+        const agenda = meetingDocumentValue(m, 'agenda');
+        const topics = agenda.split(/\n|;\s*/).map(text => text.trim()).filter(Boolean);
+        if (topics.length) {
+          const list = el('ol', 'mtg-agenda-list');
+          topics.forEach(text => list.appendChild(el('li', '', text.replace(/^\d+[.)]\s*/, ''))));
+          content.appendChild(list);
+        } else content.appendChild(el('p', 'mtg-muted', 'A pauta ainda não foi definida.'));
+        const shortcuts = el('div', 'flex flex-wrap gap-2 pt-3');
+        shortcuts.append(meetingButton('Ver pauta', () => selectDetailTab('pauta')), meetingButton(editable ? 'Registrar ata' : 'Ler ata', () => selectDetailTab('ata')), meetingButton(canFullEdit() && m.status !== 'ENCERRADA' ? 'Fazer chamada' : 'Ver presenças', () => selectDetailTab('presenca')));
+        content.appendChild(shortcuts);
+        const previous = el('details', 'border-t border-[#272832] pt-4');
+        previous.appendChild(el('summary', 'text-sm font-bold cursor-pointer', 'Ata anterior / referência'));
+        const previousBody = el('div', 'space-y-3 pt-3');
+        if (editable) {
+          const older = getPreviousMeeting(m);
+          const pull = meetingButton('Usar ata da última reunião encerrada', () => {
+            if (meetingDocumentValue(m, 'previousMinutes') && !confirm('Substituir a referência atual pela ata da última reunião encerrada?')) return;
+            setMeetingDraft(m, 'previousMinutes', `Ata de ${older.date}: ${older.minutes || ''}`);
+            document.getElementById('meeting-doc-previousMinutes').value = meetingDocumentValue(m, 'previousMinutes');
+          });
+          pull.disabled = !older;
+          previousBody.appendChild(pull);
+          if (!older) previousBody.appendChild(el('p', 'mtg-muted', 'Não há uma reunião encerrada anterior a esta data.'));
         }
-      }
-      if (isBob && (m.startedAt || m.endedAt)) {
-        const rstBtn = el('button', 'px-2.5 py-1.5 rounded-sm text-[10px] font-mono uppercase bg-[#020203] border border-[#1a1b20] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a]', 'Zerar Horário');
-        rstBtn.type = 'button';
-        rstBtn.onclick = () => resetMeetingClock(m.id);
-        clockActions.appendChild(rstBtn);
-      }
-      headerRow.appendChild(clockActions);
-      sessionPanel.appendChild(headerRow);
-
-      // Cartões de Registro de Horário de Início e Fim + Quórum
-      const activeMembersList = clubMembers.filter(mem => mem.status === 'ATIVO');
-      const presentCount = m.presentMemberIds.filter(id => activeMembersList.some(mem => mem.id === id)).length;
-      const totalMembersCount = activeMembersList.length;
-
-      const timeGrid = el('div', isMobileView() ? 'grid grid-cols-1 gap-2.5' : 'grid grid-cols-1 md:grid-cols-3 gap-3');
-
-      const startCard = el('div', 'bg-[#020203] border rounded p-3 space-y-1 ' + (m.startedAt ? 'border-[#10b981]/60' : 'border-[#1a1b20]'));
-      startCard.appendChild(el('div', 'text-[10px] font-mono uppercase tracking-widest text-[#8a8c94]', '⏱ Horário de Início Registrado'));
-      startCard.appendChild(el('div', 'text-xs font-mono font-bold ' + (m.startedAt ? 'text-[#10b981]' : 'text-[#8a8c94]'), m.startedAt || 'Aguardando clicar em "Iniciar Reunião"'));
-
-      const endCard = el('div', 'bg-[#020203] border rounded p-3 space-y-1 ' + (m.endedAt ? 'border-[#6b0f1a]' : 'border-[#1a1b20]'));
-      endCard.appendChild(el('div', 'text-[10px] font-mono uppercase tracking-widest text-[#8a8c94]', '🏁 Horário de Fim Registrado'));
-      endCard.appendChild(el('div', 'text-xs font-mono font-bold ' + (m.endedAt ? 'text-[#e6e6e1]' : 'text-[#8a8c94]'),
-        m.endedAt || (m.status === 'EM_ANDAMENTO' ? 'Em andamento — clique em "Finalizar Reunião"' : 'Não finalizada')));
-
-      const quorumCard = el('div', 'bg-[#020203] border border-[#1a1b20] rounded p-3 space-y-1');
-      quorumCard.appendChild(el('div', 'text-[10px] font-mono uppercase tracking-widest text-[#9e2232] font-bold', '☑ Membros Presentes no Checklist'));
-      quorumCard.appendChild(el('div', 'text-xs font-mono font-bold text-[#e6e6e1]', `${presentCount} de ${totalMembersCount} integrantes presentes (${Math.round((presentCount / Math.max(1, totalMembersCount)) * 100)}%)`));
-
-      timeGrid.append(startCard, endCard, quorumCard);
-      sessionPanel.appendChild(timeGrid);
-
-      // 3. ATA DA REUNIÃO ANTERIOR & PAUTA DESSA REUNIÃO ATUAL
-      const docsGrid = el('div', isMobileView() ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 lg:grid-cols-2 gap-4');
-
-      // Coluna Esquerda: ATA DA REUNIÃO ANTERIOR
-      const prevAtaBox = el('div', 'bg-[#020203] border border-[#1a1b20] border-l-4 border-l-[#8a8c94] rounded-lg p-3.5 space-y-2.5 flex flex-col justify-between');
-      const prevTop = el('div', 'space-y-2');
-      const prevHeader = el('div', 'flex flex-wrap items-center justify-between gap-2 border-b border-[#15161b] pb-2');
-      prevHeader.appendChild(el('div', 'text-xs font-bold uppercase tracking-wider text-[#e6e6e1] font-mono', '📜 Ata da Reunião Anterior'));
-      prevHeader.appendChild(el('span', 'text-[10px] font-mono px-2 py-0.5 rounded bg-[#0d0e12] border border-[#1a1b20] text-[#8a8c94]', 'Histórico / Leitura Inicial'));
-      prevTop.appendChild(prevHeader);
-
-      let inpPrevMinutes = null;
-      if (isBob) {
-        inpPrevMinutes = el('textarea', 'mc-input text-xs leading-relaxed');
-        inpPrevMinutes.rows = 4;
-        inpPrevMinutes.value = m.previousMinutes || '';
-        inpPrevMinutes.placeholder = 'Descreva ou cole aqui a Ata da Reunião Anterior...';
-        prevTop.appendChild(inpPrevMinutes);
-
-        const prevBtnRow = el('div', 'flex flex-wrap items-center justify-between gap-2 pt-1');
-        const pullPrevBtn = el('button', 'px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase bg-[#060608] border border-[#1a1b20] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a]', '📥 Puxar Ata da Reunião Passada');
-        pullPrevBtn.type = 'button';
-        pullPrevBtn.onclick = () => {
-          const curIdx = meetings.findIndex(x => x.id === m.id);
-          const older = meetings[curIdx + 1];
-          if (older && older.minutes) {
-            inpPrevMinutes.value = `Ata de ${older.date}: ${older.minutes}`;
-            m.previousMinutes = inpPrevMinutes.value;
-            persistMeetings();
-          }
-        };
-        prevBtnRow.appendChild(pullPrevBtn);
-        prevTop.appendChild(prevBtnRow);
-      } else {
-        prevTop.appendChild(el('p', 'text-xs text-[#e6e6e1] leading-relaxed whitespace-pre-line', m.previousMinutes || 'Nenhuma ata anterior vinculada.'));
-      }
-      prevAtaBox.appendChild(prevTop);
-
-      // Coluna Direita: PAUTA DESSA REUNIÃO ATUAL (+ DELIBERAÇÕES / ATA ATUAL)
-      const curAgendaBox = el('div', 'bg-[#020203] border border-[#6b0f1a] border-l-4 border-l-[#6b0f1a] rounded-lg p-3.5 space-y-2.5');
-      const curHeader = el('div', 'flex flex-wrap items-center justify-between gap-2 border-b border-[#15161b] pb-2');
-      curHeader.appendChild(el('div', 'text-xs font-bold uppercase tracking-wider text-[#9e2232] font-mono', '📌 Pauta dessa Reunião Atual'));
-      const savedDocBadge = el('span', 'hidden text-[10px] font-mono px-2 py-0.5 rounded bg-[#071f16] border border-[#10b981] text-[#10b981]', '✓ Salvo');
-      curHeader.appendChild(savedDocBadge);
-      curAgendaBox.appendChild(curHeader);
-
-      let inpCurAgenda = null;
-      let inpCurMinutes = null;
-      if (isBob) {
-        inpCurAgenda = el('textarea', 'mc-input text-xs leading-relaxed');
-        inpCurAgenda.rows = 3;
-        inpCurAgenda.value = m.agenda || '';
-        inpCurAgenda.placeholder = 'Tópicos da Pauta dessa Reunião Atual...';
-        curAgendaBox.appendChild(inpCurAgenda);
-
-        curAgendaBox.appendChild(el('div', 'text-[10px] font-mono uppercase tracking-wider text-[#8a8c94] pt-1', '📝 Registro da Ata / Decisões desta Reunião Atual:'));
-        inpCurMinutes = el('textarea', 'mc-input text-xs leading-relaxed');
-        inpCurMinutes.rows = 2;
-        inpCurMinutes.value = m.minutes || '';
-        inpCurMinutes.placeholder = 'Anote as decisões tomadas nesta reunião...';
-        curAgendaBox.appendChild(inpCurMinutes);
-
-        const saveDocsBtn = el('button', 'w-full py-2 rounded-sm mc-btn-burgundy text-xs mt-1', '💾 Salvar Ata Anterior & Pauta da Reunião Atual (BOB)');
-        saveDocsBtn.type = 'button';
-        saveDocsBtn.onclick = () => {
-          if (inpPrevMinutes) m.previousMinutes = inpPrevMinutes.value.trim();
-          if (inpCurAgenda) m.agenda = inpCurAgenda.value.trim();
-          if (inpCurMinutes) m.minutes = inpCurMinutes.value.trim();
-          persistMeetings();
-          savedDocBadge.classList.remove('hidden');
-          setTimeout(() => savedDocBadge.classList.add('hidden'), 2200);
-        };
-        curAgendaBox.appendChild(saveDocsBtn);
-      } else {
-        curAgendaBox.appendChild(el('p', 'text-xs text-[#e6e6e1] leading-relaxed whitespace-pre-line', m.agenda || 'Sem pauta cadastrada.'));
-        const curMinWrap = el('div', 'pt-2 border-t border-[#15161b] space-y-1');
-        curMinWrap.appendChild(el('div', 'text-[10px] font-mono uppercase tracking-wider text-[#8a8c94]', '📝 Decisões / Ata desta Reunião:'));
-        curMinWrap.appendChild(el('p', 'text-xs text-[#e6e6e1] leading-relaxed whitespace-pre-line', m.minutes || 'Em lavratura pela Secretaria.'));
-        curAgendaBox.appendChild(curMinWrap);
-      }
-
-      docsGrid.append(prevAtaBox, curAgendaBox);
-      sessionPanel.appendChild(docsGrid);
-
-      // 4. SESSÃO CHECKLIST DOS MEMBROS PRESENTES NA REUNIÃO (TODOS OS 19 INTEGRANTES)
-      const checklistPanel = el('div', 'bg-[#020203] border border-[#1a1b20] rounded-lg p-3.5 space-y-3');
-      const chkHeader = el('div', 'flex flex-wrap items-center justify-between gap-2 border-b border-[#15161b] pb-2.5');
-      const chkTitleWrap = el('div', 'space-y-0.5');
-      chkTitleWrap.appendChild(el('div', 'text-xs font-bold uppercase tracking-wider text-[#e6e6e1]', `☑ Checklist de Membros Presentes na Reunião (${presentCount}/${totalMembersCount})`));
-      chkTitleWrap.appendChild(el('p', 'text-[11px] text-[#8a8c94]', 'Clique nos integrantes abaixo para marcar ou desmarcar presença na chamada desta reunião.'));
-      chkHeader.appendChild(chkTitleWrap);
-
-      const chkActions = el('div', 'flex flex-wrap items-center gap-1.5');
-      const btnAll = el('button', 'px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase bg-[#071f16] border border-[#10b981]/60 text-[#10b981] hover:bg-[#10b981] hover:text-[#020203] transition', '✓ Marcar Todos');
-      btnAll.type = 'button';
-      btnAll.onclick = () => setAllMembersPresenceInMeeting(m.id, true);
-      const btnNone = el('button', 'px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase bg-[#060608] border border-[#1a1b20] text-[#8a8c94] hover:text-[#e6e6e1] hover:border-[#6b0f1a] transition', '✕ Limpar Seleção');
-      btnNone.type = 'button';
-      btnNone.onclick = () => setAllMembersPresenceInMeeting(m.id, false);
-      chkActions.append(btnAll, btnNone);
-      chkHeader.appendChild(chkActions);
-      checklistPanel.appendChild(chkHeader);
-
-      const chkGrid = el('div', isMobileView() ? 'grid grid-cols-1 gap-2' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2');
-      activeMembersList.forEach(mem => {
-        const isPresent = m.presentMemberIds.includes(mem.id);
-        const row = el('button', 'w-full text-left p-2.5 rounded border transition flex items-center justify-between gap-2 ' +
-          (isPresent
-            ? 'bg-[#071f16]/70 border-[#10b981] text-[#e6e6e1]'
-            : 'bg-[#040406] border-[#1a1b20] text-[#8a8c94] hover:border-[#6b0f1a]/60 hover:text-[#e6e6e1]'));
-        row.type = 'button';
-        row.onclick = () => toggleMemberPresenceInMeeting(m.id, mem.id);
-
-        const left = el('div', 'flex items-center gap-2.5 min-w-0');
-        const boxIcon = el('span', 'w-5 h-5 rounded-sm flex items-center justify-center text-xs font-mono font-bold flex-shrink-0 border ' +
-          (isPresent ? 'bg-[#10b981] border-[#10b981] text-[#020203]' : 'bg-[#020203] border-[#2a2b31] text-[#8a8c94]'),
-          isPresent ? '✓' : '');
-        const textWrap = el('div', 'min-w-0');
-        textWrap.appendChild(el('div', 'text-xs font-black uppercase tracking-wider break-words ' + (isPresent ? 'text-[#e6e6e1]' : 'text-[#c0c2c9]'), mem.roadName));
-        textWrap.appendChild(el('div', 'text-[10px] font-mono text-[#8a8c94] break-words', mem.rankLabel));
-        left.append(boxIcon, textWrap);
-
-        const pill = el('span', 'text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded-sm flex-shrink-0 ' +
-          (isPresent ? 'bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/50' : 'bg-[#0a0b0e] text-[#8a8c94] border border-[#1a1b20]'),
-          isPresent ? 'PRESENTE' : 'AUSENTE');
-
-        row.append(left, pill);
-        chkGrid.appendChild(row);
-      });
-      checklistPanel.appendChild(chkGrid);
-
-      // Resumo textual dos presentes para ata
-      const presentNames = activeMembersList
-        .filter(mem => m.presentMemberIds.includes(mem.id))
-        .map(mem => `${mem.roadName} (${mem.rankLabel})`);
-      const summaryFooter = el('div', 'pt-2 border-t border-[#15161b] text-[11px] font-mono text-[#8a8c94]');
-      summaryFooter.textContent = presentNames.length
-        ? `Presentes registrados em ata (${presentNames.length}): ${presentNames.join(' • ')}`
-        : 'Nenhum integrante marcado como presente ainda.';
-      checklistPanel.appendChild(summaryFooter);
-
-      sessionPanel.appendChild(checklistPanel);
-      container.appendChild(sessionPanel);
+        renderMeetingDocument(previousBody, m, 'previousMinutes', 'Ata anterior vinculada', 'Nenhuma ata anterior vinculada.', editable);
+        previous.appendChild(previousBody);
+        content.appendChild(previous);
+      } else if (meetingDetailTab === 'pauta') {
+        content.append(el('h4', 'text-base font-bold', 'Assuntos da reunião'), el('p', 'mtg-muted', editable ? 'Use um assunto por linha para facilitar a leitura no resumo.' : 'Pauta organizada pela Secretaria.'));
+        renderMeetingDocument(content, m, 'agenda', 'Pauta desta reunião', 'Nenhuma pauta cadastrada.', editable);
+      } else if (meetingDetailTab === 'ata') {
+        content.append(el('h4', 'text-base font-bold', 'Ata e deliberações'), el('p', 'mtg-muted', 'Registre decisões, responsáveis e próximos passos deste encontro.'));
+        renderMeetingDocument(content, m, 'minutes', 'Ata desta reunião', 'Nenhuma deliberação registrada ainda.', editable);
+      } else renderMeetingPresence(content, m, editable);
+      detail.appendChild(content);
+      layout.append(rail, detail);
+      container.appendChild(layout);
+      renderMeetingCards();
+      updateMeetingSaveFeedback();
     }
 
     function createMeeting(e) {
@@ -2741,25 +2934,36 @@
       const rawDate = document.getElementById('mtg-date').value;
       const parts = rawDate.split('-');
       const brDate = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : rawDate;
+      const title = document.getElementById('mtg-title').value.trim();
+      const location = document.getElementById('mtg-loc').value.trim();
+      const agenda = document.getElementById('mtg-agenda').value.trim();
+      if (!title || !location || !agenda) {
+        alert('Preencha o título, o local e a pauta da reunião.');
+        return;
+      }
       const newId = 'mtg-' + Date.now();
       meetings.unshift({
         id: newId,
-        title: document.getElementById('mtg-title').value.trim(),
-        date: `${brDate} • 20:00h`,
-        location: document.getElementById('mtg-loc').value.trim(),
+        title,
+        date: `${brDate} • ${document.getElementById('mtg-time').value}h`,
+        location,
         status: 'AGUARDANDO',
         startedAt: null,
         endedAt: null,
         previousMinutes: document.getElementById('mtg-prev-minutes').value.trim(),
-        agenda: document.getElementById('mtg-agenda').value.trim(),
-        minutes: document.getElementById('mtg-minutes').value.trim() || 'Deliberações em aberto — aguarda início da reunião.',
-        presentMemberIds: ['m-05'] // BOB (Secretaria) pré-marcado
+        agenda,
+        minutes: document.getElementById('mtg-minutes').value.trim(),
+        presentMemberIds: []
       });
       selectedMeetingId = newId;
+      meetingFilter = 'TODOS';
+      meetingSearch = '';
+      meetingDetailTab = 'resumo';
       persistMeetings();
       e.target.reset();
-      toggleElement('modal-new-meeting');
+      openNewMeetingModal();
       renderMeetings();
+      document.getElementById('meeting-detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // ===================== AGENDA CARNICEIROS (CALENDÁRIO + 2ª TERÇA-FEIRA DO MÊS) =====================
