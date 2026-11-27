@@ -617,8 +617,10 @@
                   </label>
                   <span id="evt-flyer-status" class="font-mono text-[#8a8c94]">Sem anexo</span>
                   <button id="evt-flyer-clear" type="button" onclick="clearPendingFlyer()" class="hidden text-[10px] font-mono px-2 py-0.5 rounded border border-[#6b0f1a] text-[#9e2232] hover:text-[#e6e6e1]">✕ Remover anexo</button>
+                  <button id="evt-ai-btn" type="button" onclick="analyzeFlyerWithAI()" class="hidden px-2.5 py-1.5 rounded border border-[#10b981] bg-[#071f16] text-[#10b981] hover:bg-[#0a2a1e] font-bold transition">🤖 Ler flyer com IA</button>
                 </div>
               </div>
+              <div id="evt-ai-status" class="hidden font-mono text-[11px] break-words"></div>
               <div id="evt-flyer-preview-box" class="hidden bg-[#060608] border border-[#1a1b20] rounded p-2.5 flex items-center gap-3">
                 <img id="evt-flyer-preview-img" alt="Preview do Anexo" class="hidden w-14 h-14 object-cover rounded border border-[#6b0f1a]" />
                 <div id="evt-flyer-preview-meta" class="text-xs font-mono text-[#10b981] break-all"></div>
@@ -3312,6 +3314,9 @@
       const box = document.getElementById('evt-flyer-preview-box');
       const img = document.getElementById('evt-flyer-preview-img');
       const meta = document.getElementById('evt-flyer-preview-meta');
+      const aiBtn = document.getElementById('evt-ai-btn');
+      if (aiBtn) aiBtn.classList.toggle('hidden', !pendingFlyerDataUrl);
+      if (!pendingFlyerDataUrl) setFlyerAiStatus('');
       if (!status) return;
 
       if (!pendingFlyerMeta) {
@@ -3738,6 +3743,105 @@
           persistActiveSession();
         }
       } catch (_e) {}
+    }
+
+    function setFlyerAiStatus(message, tone) {
+      const box = document.getElementById('evt-ai-status');
+      if (!box) return;
+      if (!message) {
+        box.textContent = '';
+        box.className = 'hidden font-mono text-[11px] break-words';
+        return;
+      }
+      box.textContent = message;
+      box.className = `font-mono text-[11px] break-words ${tone === 'error' ? 'text-[#f59e0b]' : tone === 'ok' ? 'text-[#10b981]' : 'text-[#8a8c94]'}`;
+    }
+
+    function applyFlyerAiResult(result) {
+      const filled = [];
+      const iso = String((result && result.data) || '').trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+        const dateInp = document.getElementById('evt-date');
+        if (dateInp) { dateInp.value = iso; filled.push('data'); }
+      }
+
+      const title = String((result && result.titulo) || '').trim();
+      const titleInp = document.getElementById('evt-title');
+      if (title && titleInp && !titleInp.value.trim()) { titleInp.value = title; filled.push('título'); }
+
+      const location = String((result && result.local) || '').trim();
+      const locInp = document.getElementById('evt-loc');
+      if (location && locInp && !locInp.value.trim()) { locInp.value = location; filled.push('local'); }
+
+      const description = String((result && result.descricao) || '').trim();
+      const descInp = document.getElementById('evt-desc');
+      if (description && descInp && !descInp.value.trim()) descInp.value = description;
+
+      const horario = String((result && result.horario) || '').trim();
+      if ((result && result.diaInteiro === true) || /dia\s+(inteiro|todo)/i.test(horario)) {
+        applyEventAllDayState(true);
+        filled.push('dia inteiro');
+      } else {
+        const hm = /(\d{1,2})[:hH](\d{1,2})/.exec(horario);
+        if (hm) {
+          const timeInp = document.getElementById('evt-time');
+          if (timeInp) timeInp.value = `${hm[1].padStart(2, '0')}:${hm[2].padStart(2, '0')}h`;
+          filled.push('horário');
+        }
+      }
+
+      saveEventDraft();
+      const conf = result && typeof result.confianca === 'number' ? Math.round(result.confianca * 100) : null;
+      setFlyerAiStatus(
+        `✓ IA preencheu: ${filled.length ? filled.join(', ') : 'nenhum campo novo'}. Confira e clique em "Salvar na Agenda".`
+          + (conf !== null ? ` (confiança ${conf}%)` : ''),
+        'ok'
+      );
+    }
+
+    async function analyzeFlyerWithAI() {
+      if (!canFullEdit()) return;
+      if (!pendingFlyerDataUrl) {
+        setFlyerAiStatus('Anexe um flyer (imagem ou PDF) antes de usar a IA.', 'error');
+        return;
+      }
+      const btn = document.getElementById('evt-ai-btn');
+      const originalLabel = btn ? btn.textContent : '🤖 Ler flyer com IA';
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50');
+        btn.textContent = '🤖 Lendo flyer...';
+      }
+      setFlyerAiStatus('A IA está lendo o flyer. Isso pode levar alguns segundos...', 'info');
+      try {
+        if (!await ensureSupabaseSession()) throw new Error('Sessão expirada. Saia e entre novamente no app.');
+        const cfg = getSupabaseConfig();
+        const dataUrl = String(pendingFlyerDataUrl);
+        const mimeMatch = /^data:([^;]+);base64,/.exec(dataUrl);
+        const mimeType = (mimeMatch && mimeMatch[1]) || (pendingFlyerType === 'pdf' ? 'application/pdf' : 'image/jpeg');
+        const res = await fetch(`${cfg.url}/functions/v1/read-flyer`, {
+          method: 'POST',
+          headers: buildSupabaseHeaders(cfg, { 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ image: dataUrl, mimeType })
+        });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (res.status === 401) throw new Error('Sessão expirada. Saia e entre novamente no app.');
+          if (res.status === 403) throw new Error(payload.error || 'Somente BOB pode usar a leitura de flyers.');
+          if (res.status === 404) throw new Error('A IA ainda não foi publicada no servidor (função read-flyer).');
+          if (res.status === 429) throw new Error('Limite gratuito da IA atingido agora. Tente em alguns minutos.');
+          throw new Error(payload.error || 'Não foi possível ler o flyer.');
+        }
+        applyFlyerAiResult(payload.result || payload);
+      } catch (err) {
+        setFlyerAiStatus('✕ ' + (err && err.message ? err.message : 'Falha ao ler o flyer.'), 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50');
+          btn.textContent = originalLabel;
+        }
+      }
     }
 
     function renderEvents() {
