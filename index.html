@@ -1405,6 +1405,9 @@
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 429 || data.error_code === 'over_email_send_rate_limit') {
+          throw new Error('Limite de envio de e-mails do projeto atingido (2 por hora no SMTP padrão do Supabase). Aguarde a próxima hora ou configure um SMTP próprio.');
+        }
         throw new Error(data.error_description || data.msg || data.error || 'Não foi possível enviar o e-mail de redefinição.');
       }
       clearRecoveryCredential();
