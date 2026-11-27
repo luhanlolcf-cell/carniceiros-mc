@@ -571,9 +571,14 @@
                 </div>
                 <p id="events-subtitle" class="text-xs text-[#8a8c94] mt-1"></p>
               </div>
-              <button id="btn-new-event" type="button" onclick="toggleNewEventModal()" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
-                + Adicionar na Agenda (BOB)
-              </button>
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="btn-agenda-report" type="button" onclick="openAgendaReport()" class="px-3.5 py-2 rounded-sm bg-[#060608] border border-[#1a1b20] hover:border-[#6b0f1a] text-xs font-bold uppercase text-[#e6e6e1] transition">
+                  📄 Relatório Escrito
+                </button>
+                <button id="btn-new-event" type="button" onclick="toggleNewEventModal()" class="px-3.5 py-2 rounded-sm mc-btn-burgundy text-xs">
+                  + Adicionar na Agenda (BOB)
+                </button>
+              </div>
             </div>
 
             <div id="agenda-saved-banner" class="hidden p-3 rounded border border-[#10b981] bg-[#071f16] text-[#10b981] text-xs font-mono font-bold"></div>
@@ -600,6 +605,10 @@
                     <input id="evt-mandatory" type="checkbox" checked onchange="saveEventDraft()" class="accent-[#6b0f1a]" />
                     <span class="font-bold text-[#9e2232] uppercase">★ Presença Obrigatória</span>
                   </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer">
+                    <input id="evt-allday" type="checkbox" onchange="toggleEventAllDay(this.checked)" class="accent-[#6b0f1a]" />
+                    <span class="font-bold text-[#8a8c94] uppercase">Dia inteiro</span>
+                  </label>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 text-xs">
                   <label onclick="persistActiveSession(); saveEventDraft();" class="px-3 py-1.5 rounded border border-[#6b0f1a] bg-[#060608] hover:bg-[#170306] cursor-pointer font-bold text-[#e6e6e1] transition">
@@ -619,6 +628,28 @@
                 <button type="button" onclick="createEvent(event)" class="px-4 py-1.5 text-xs rounded-sm mc-btn-burgundy">💾 Salvar na Agenda</button>
               </div>
             </form>
+
+            <!-- Modal do Relatório Escrito da Agenda -->
+            <div id="modal-agenda-report" class="hidden fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4" onclick="closeAgendaReport()">
+              <div class="mc-shield-panel rounded-lg max-w-3xl w-full p-4 space-y-3 border-2 border-[#6b0f1a]" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-between gap-2 border-b border-[#1a1b20] pb-2">
+                  <div class="min-w-0">
+                    <div class="mc-display-font text-xs text-[#e6e6e1]">📄 Relatório Escrito da Agenda Carniceiros</div>
+                    <div id="agenda-report-subtitle" class="text-[11px] font-mono text-[#8a8c94]"></div>
+                  </div>
+                  <button type="button" onclick="closeAgendaReport()" class="px-2.5 py-1 rounded text-xs font-mono bg-[#060608] border border-[#6b0f1a] text-[#e6e6e1]">✕ Fechar</button>
+                </div>
+                <pre id="agenda-report-text" class="bg-[#020203] border border-[#1a1b20] rounded p-3 text-[11px] leading-relaxed font-mono text-[#e6e6e1] whitespace-pre-wrap max-h-[60vh] overflow-auto"></pre>
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div id="agenda-report-feedback" class="hidden text-xs font-mono font-bold"></div>
+                  <div class="flex flex-wrap justify-end gap-2 text-xs">
+                    <button type="button" onclick="copyAgendaReport()" class="px-3 py-1.5 rounded border border-[#1a1b20] bg-[#060608] hover:border-[#6b0f1a] text-[#e6e6e1] font-bold">📋 Copiar</button>
+                    <button type="button" onclick="downloadAgendaReport()" class="px-3 py-1.5 rounded border border-[#1a1b20] bg-[#060608] hover:border-[#6b0f1a] text-[#e6e6e1] font-bold">⬇ Baixar .txt</button>
+                    <button type="button" onclick="printAgendaReport()" class="px-3 py-1.5 rounded-sm mc-btn-burgundy font-bold">🖨 Imprimir / PDF</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Modal para visualizar anexo de evento na Agenda -->
             <div id="modal-attachment-viewer" class="hidden fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4" onclick="closeAttachmentViewer()">
@@ -3260,6 +3291,7 @@
           loc: document.getElementById('evt-loc')?.value || '',
           desc: document.getElementById('evt-desc')?.value || '',
           mandatory: Boolean(document.getElementById('evt-mandatory')?.checked),
+          allday: Boolean(document.getElementById('evt-allday')?.checked),
           pendingFlyerMeta,
           pendingFlyerDataUrl,
           pendingFlyerType
@@ -3326,6 +3358,16 @@
         if (document.getElementById('evt-title')) document.getElementById('evt-title').value = draft.title || '';
         if (document.getElementById('evt-date') && draft.date) document.getElementById('evt-date').value = draft.date;
         if (document.getElementById('evt-time') && draft.time) document.getElementById('evt-time').value = draft.time;
+        if (document.getElementById('evt-allday')) {
+          const allday = Boolean(draft.allday);
+          document.getElementById('evt-allday').checked = allday;
+          const timeInp = document.getElementById('evt-time');
+          if (timeInp) {
+            timeInp.disabled = allday;
+            timeInp.classList.toggle('opacity-50', allday);
+            if (allday) timeInp.value = 'DIA INTEIRO';
+          }
+        }
         if (document.getElementById('evt-loc')) document.getElementById('evt-loc').value = draft.loc || '';
         if (document.getElementById('evt-desc')) document.getElementById('evt-desc').value = draft.desc || '';
         if (document.getElementById('evt-mandatory') && typeof draft.mandatory === 'boolean') {
@@ -3404,6 +3446,170 @@
     function closeAttachmentViewer() {
       const modal = document.getElementById('modal-attachment-viewer');
       if (modal) modal.classList.add('hidden');
+    }
+
+    let agendaReportContent = '';
+
+    function applyEventAllDayState(isAllDay) {
+      const box = document.getElementById('evt-allday');
+      const timeInp = document.getElementById('evt-time');
+      if (box) box.checked = Boolean(isAllDay);
+      if (!timeInp) return;
+      timeInp.disabled = Boolean(isAllDay);
+      timeInp.classList.toggle('opacity-50', Boolean(isAllDay));
+      if (isAllDay) {
+        if (!/dia\s+(inteiro|todo)/i.test(timeInp.value)) {
+          timeInp.dataset.prevTime = timeInp.value || '20:00h';
+        }
+        timeInp.value = 'DIA INTEIRO';
+      } else {
+        timeInp.value = timeInp.dataset.prevTime || '20:00h';
+      }
+    }
+
+    function toggleEventAllDay(isAllDay) {
+      applyEventAllDayState(isAllDay);
+      saveEventDraft();
+    }
+
+    function agendaEventIsoDate(ev) {
+      const iso = String((ev && ev.isoDate) || '');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+      return formatIsoDate(Number(ev && ev.year) || 2026, Number(ev && ev.monthIndex) || 0, Number(ev && ev.day) || 1);
+    }
+
+    function agendaReportTimeLabel(ev) {
+      const raw = String((ev && ev.date) || '').split('•')[1] || '';
+      const time = raw.trim().toUpperCase();
+      if (!time || /DIA\s+(INTEIRO|TODO)/.test(time)) return 'DIA INTEIRO';
+      return time;
+    }
+
+    function buildAgendaReport(year) {
+      const events = [];
+      for (let m = 0; m < 12; m++) events.push(buildMonthlyFixedMeeting(year, m));
+      customAgendaEvents.forEach(ev => {
+        if (Number(ev && ev.year) === year) events.push(ev);
+      });
+      events.sort((a, b) => agendaEventIsoDate(a).localeCompare(agendaEventIsoDate(b)));
+
+      const lines = events.map(ev => {
+        const parts = agendaEventIsoDate(ev).split('-');
+        const brDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        const title = String((ev && ev.title) || 'COMPROMISSO').toUpperCase();
+        const location = String((ev && ev.location) || '').trim().toUpperCase() || 'SEDE CARNICEIROS';
+        return `${brDate} - ${title} - ${location} / ${agendaReportTimeLabel(ev)}`;
+      });
+
+      const generatedAt = new Date().toLocaleString('pt-BR');
+      const header = [
+        `CARNICEIROS MC — AGENDA OFICIAL ${year}`,
+        'Curitiba • PR • BR',
+        `Relatório gerado em ${generatedAt}`,
+        `${lines.length} compromisso(s) registrado(s)`,
+        '-'.repeat(72)
+      ];
+      return { text: header.concat(lines).join('\n'), count: lines.length };
+    }
+
+    function setAgendaReportFeedback(msg, isError) {
+      const box = document.getElementById('agenda-report-feedback');
+      if (!box) return;
+      if (!msg) {
+        box.textContent = '';
+        box.classList.add('hidden');
+        return;
+      }
+      box.textContent = msg;
+      box.className = `text-xs font-mono font-bold ${isError ? 'text-[#f59e0b]' : 'text-[#10b981]'}`;
+    }
+
+    function openAgendaReport() {
+      const report = buildAgendaReport(agendaYear);
+      agendaReportContent = report.text;
+      const modal = document.getElementById('modal-agenda-report');
+      const pre = document.getElementById('agenda-report-text');
+      const subtitle = document.getElementById('agenda-report-subtitle');
+      if (subtitle) subtitle.textContent = `Ano ${agendaYear} • ${report.count} compromisso(s) • Ex.: 12/01/2027 - EVENTO - LOCAL / HORÁRIO`;
+      if (pre) pre.textContent = report.text;
+      setAgendaReportFeedback('');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAgendaReport() {
+      const modal = document.getElementById('modal-agenda-report');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function copyAgendaReport() {
+      if (!agendaReportContent) return;
+      const okMessage = '✓ Relatório copiado para a área de transferência.';
+      const failMessage = 'Não foi possível copiar automaticamente. Selecione o texto e copie manualmente.';
+      const fallbackCopy = () => {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = agendaReportContent;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand('copy');
+          ta.remove();
+          setAgendaReportFeedback(ok ? okMessage : failMessage, !ok);
+        } catch (_e) {
+          setAgendaReportFeedback(failMessage, true);
+        }
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(agendaReportContent).then(
+          () => setAgendaReportFeedback(okMessage, false),
+          fallbackCopy
+        );
+      } else {
+        fallbackCopy();
+      }
+    }
+
+    function downloadAgendaReport() {
+      if (!agendaReportContent) return;
+      try {
+        const blob = new Blob([agendaReportContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `agenda-carniceiros-${agendaYear}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        setAgendaReportFeedback('✓ Arquivo .txt gerado para download.', false);
+      } catch (_e) {
+        setAgendaReportFeedback('Não foi possível baixar o arquivo neste dispositivo.', true);
+      }
+    }
+
+    function printAgendaReport() {
+      if (!agendaReportContent) return;
+      try {
+        const win = window.open('', '_blank');
+        if (!win) {
+          setAgendaReportFeedback('O navegador bloqueou a janela de impressão. Use "Baixar .txt" ou libere pop-ups.', true);
+          return;
+        }
+        const escaped = agendaReportContent
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        win.document.write('<!doctype html><html><head><meta charset="utf-8">'
+          + `<title>Agenda Carniceiros ${agendaYear}</title>`
+          + '<style>body{font-family:Consolas,"Courier New",monospace;white-space:pre-wrap;font-size:12px;line-height:1.5;padding:24px;color:#111}@media print{body{padding:0}}</style>'
+          + `</head><body>${escaped}</body></html>`);
+        win.document.close();
+        win.focus();
+        win.print();
+      } catch (_e) {
+        setAgendaReportFeedback('Não foi possível abrir a impressão neste dispositivo.', true);
+      }
     }
 
     function changeAgendaMonth(delta) {
@@ -3777,6 +3983,7 @@
       if (titleInput) titleInput.value = '';
       if (document.getElementById('evt-loc')) document.getElementById('evt-loc').value = '';
       if (document.getElementById('evt-desc')) document.getElementById('evt-desc').value = '';
+      if (document.getElementById('evt-allday')?.checked) applyEventAllDayState(false);
       clearPendingFlyer();
       clearEventDraft();
 
@@ -3784,7 +3991,7 @@
       if (modal) modal.classList.add('hidden');
 
       renderEvents();
-      showAgendaBanner(`✓ Compromisso "${titleVal}" (${formatBrDate(y, mIdx, d)} às ${timeStr}) salvo com sucesso na Agenda Carniceiros!`);
+      showAgendaBanner(`✓ Compromisso "${titleVal}" (${formatBrDate(y, mIdx, d)} ${/dia\s+(inteiro|todo)/i.test(timeStr) ? '— dia inteiro' : 'às ' + timeStr}) salvo com sucesso na Agenda Carniceiros!`);
       return false;
     }
 
