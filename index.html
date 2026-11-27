@@ -1147,7 +1147,6 @@
     const MEMBER_RECORDS_STORAGE_KEY = 'cmc_member_records_v1';
     const CUSTOM_MEMBERS_STORAGE_KEY = 'cmc_custom_members_v1';
     const ACTIVE_SESSION_STORAGE_KEY = 'cmc_active_session_v1';
-    const RECOVERY_VERIFIER_STORAGE_KEY = 'cmc_pwd_recovery_verifier_v1';
     const RECOVERY_CREDENTIAL_STORAGE_KEY = 'cmc_pwd_recovery_credential_v1';
     let recoverySession = null;
     // Backend unificado (Web + APK Android) — conexão 100% automática sem interação do usuário
@@ -1285,20 +1284,6 @@
       return member;
     }
 
-    function toBase64Url(buffer) {
-      return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
-        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    }
-
-    async function createPkcePair() {
-      if (!window.crypto || !window.crypto.subtle) return null;
-      const random = new Uint8Array(64);
-      window.crypto.getRandomValues(random);
-      const verifier = toBase64Url(random);
-      const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
-      return { verifier, challenge: toBase64Url(digest) };
-    }
-
     function recoveryCredentialMessage(code, description) {
       if (code === 'otp_expired' || /expired/i.test(description || '')) {
         return 'Este link de redefinição expirou ou já foi usado. Abra o e-mail mais recente ou peça um novo link.';
@@ -1333,42 +1318,12 @@
       try { sessionStorage.removeItem(RECOVERY_CREDENTIAL_STORAGE_KEY); } catch (_e) {}
     }
 
-    async function exchangeRecoveryCode(code) {
-      let stored = null;
-      try {
-        stored = JSON.parse(localStorage.getItem(RECOVERY_VERIFIER_STORAGE_KEY) || 'null');
-        localStorage.removeItem(RECOVERY_VERIFIER_STORAGE_KEY);
-      } catch (_e) {}
-      if (!stored || !stored.verifier) {
-        return { error: 'Abra o link no mesmo navegador em que você pediu a redefinição.' };
-      }
-      const cfg = getSupabaseConfig();
-      const res = await fetch(`${cfg.url}/auth/v1/token?grant_type=pkce`, {
-        method: 'POST',
-        headers: { 'apikey': cfg.anonKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ auth_code: code, code_verifier: stored.verifier })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.access_token) {
-        return { error: data.error_description || data.msg || 'Não foi possível validar o link de redefinição.' };
-      }
-      return {
-        credential: {
-          token: data.access_token,
-          email: (data.user && data.user.email) || '',
-          expires_at: Date.now() + Number(data.expires_in || 3600) * 1000
-        }
-      };
-    }
-
     async function consumeRecoveryLinkFromUrl() {
       const url = new URL(window.location.href);
-      const code = url.searchParams.get('code');
       const hash = new URLSearchParams(url.hash.replace(/^#/, ''));
       const recoveryToken = hash.get('access_token') && hash.get('type') === 'recovery' ? hash.get('access_token') : '';
       const failed = hash.get('error') || '';
-      if (!code && !recoveryToken && !failed) return null;
-      if (code) return exchangeRecoveryCode(code);
+      if (!recoveryToken && !failed) return null;
       window.history.replaceState(null, '', url.pathname);
       if (failed) return { error: recoveryCredentialMessage(hash.get('error_code'), hash.get('error_description')) };
       return { credential: { token: recoveryToken, email: '', expires_at: Date.now() + 3600000 } };
@@ -1442,18 +1397,6 @@
       const body = { email: normalizedEmail };
       if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
         body.redirect_to = window.location.origin + window.location.pathname;
-        // No APK o link é aberto pelo navegador do sistema, então o resgate precisa ser do tipo
-        // implícito (sem verifier PKCE preso ao WebView).
-        if (!window.Capacitor) {
-          const pkce = await createPkcePair();
-          if (pkce) {
-            try {
-              localStorage.setItem(RECOVERY_VERIFIER_STORAGE_KEY, JSON.stringify({ verifier: pkce.verifier, at: Date.now() }));
-            } catch (_e) {}
-            body.code_challenge = pkce.challenge;
-            body.code_challenge_method = 'S256';
-          }
-        }
       }
       const res = await fetch(`${cfg.url}/auth/v1/recover`, {
         method: 'POST',
